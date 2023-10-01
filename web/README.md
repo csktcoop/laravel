@@ -64,3 +64,66 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+## Setup
+
+### Pre-requisite
+
+1. Windows OS
+1. [Git](https://git-scm.com/download/win)
+1. [NodeJS](https://nodejs.org/en)
+1. [XAMPP](https://www.apachefriends.org/download.html)
+    1. Apache 2.4
+    1. PHP 8.1
+    1. MariaDB 10.4
+    1. [VS16](https://learn.microsoft.com/en-US/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022)
+1. [Composer](https://getcomposer.org/Composer-Setup.exe)
+
+### Local environment
+
+1. mkdir C:\www\laravel
+1. cd C:\www\laravel\web
+1. git clone git@github.com:csktcoop/laravel.git .
+1. Switch either branches
+    1. git checkout main
+    1. git checkout develop
+1. Add local domain
+    1. C:\Windows\System32\drivers\etc\hosts > add "127.0.0.1 test.laravel.com"
+1. Run XAMPP to let the database online.
+1. http://localhost/phpmyadmin/index.php?route=/server/databases
+    1. create "laravel" database
+1. cp .env.example .env
+1. composer install
+1. Run built-in server
+    1. php artisan serve --host=test.laravel.com --port=80
+1. Run front-end watcher server
+    1. npm run dev
+1. Create tables for the database.
+    1. php artisan migrate
+1. http://test.laravel.com/ > GENERATE APP KEY > Refresh now
+
+## Working processes
+
+### Switching branch
+
+1. cd web
+1. git checkout FEATURE_BRANCH
+1. composer i
+1. php artisan migrate
+
+## Features
+
+### Tasks
+
+1. http://test.laravel.com/register
+1. http://test.laravel.com/login
+1. At top navigation > Tasks menu item
+    1. At Create Task section > edit task detail > POST button
+    1. At My Task List section
+        1. Either input a date and/or select a status > Filter button
+        1. Reset link
+    1. On each task by the user > kebab menu > Edit menu item
+        1. Input task detail
+        1. Select task status
+        1. Update button
+    1. On each task by the user > kebab menu > Delete menu item > OK or Cancel button

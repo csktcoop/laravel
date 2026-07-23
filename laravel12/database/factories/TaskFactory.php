@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use Domain\Task\Models\Task;
 use App\Models\User;
+use Domain\Task\Models\Task;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

@@ -19,6 +19,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "larastan/larastan": "^3.10",
         "laravel/boost": "^2.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
@@ -42,30 +43,9 @@
         }
     },
     "scripts": {
-        "setup": [
-            "composer install",
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --seed",
-            "cd ../vue3 && pnpm install && cd ../laravel12"
-        ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
             "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"cd ../vue3 && pnpm dev\" --names=backend,queue,logs,frontend --kill-others"
-        ],
-        "build": [
-            "cd ../vue3 && pnpm build && cd ../laravel12"
-        ],
-        "lint": [
-            "pint --parallel"
-        ],
-        "test:lint": [
-            "pint --parallel --test"
-        ],
-        "test": [
-            "@php artisan config:clear --ansi",
-            "@test:lint",
-            "@php artisan test"
         ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

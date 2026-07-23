@@ -1,0 +1,22 @@
+/* Global styles for the Element Plus app shell */
+html, body, #app {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #f4f6fb;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.el-container {
+  min-height: 100vh;
+}
+
+.el-main {
+  padding: 24px;
+}

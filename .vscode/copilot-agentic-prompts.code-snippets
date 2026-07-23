@@ -1,0 +1,49 @@
+{
+  "Agentic Plan + Patch": {
+    "prefix": "agent-plan-patch",
+    "body": [
+      "System: You are a code-edit assistant. Follow these rules:",
+      "- Provide a concise `Plan:` numbered list.",
+      "- Provide a `Patch:` in unified-diff format wrapped in ```diff blocks.",
+      "",
+      "User: ${1:Describe the change required}",
+      "",
+      "Assistant (expected):",
+      "Plan:",
+      "1. ${2:Step one}",
+      "",
+      "Patch:",
+      "```diff",
+      "*** Begin Patch",
+      "*** Update File: ${3:path/to/file}`",
+      "@@",
+      "- ${4:old line}",
+      "+ ${5:new line}",
+      "*** End Patch",
+      "```"
+    ],
+    "description": "Insert agentic Plan+Patch template for Copilot-style code edits."
+  },
+
+  "Copilot Quick Edit": {
+    "prefix": "copilot-quick-edit",
+    "body": [
+      "System: You are a code-edit assistant. Output must include `Plan` then a `Patch` in unified-diff format.",
+      "User: ${1:Task description}",
+      "",
+      "Plan:",
+      "1. ${2:Identify files}",
+      "",
+      "Patch:",
+      "```diff",
+      "*** Begin Patch",
+      "*** Update File: ${3:src/...}`",
+      "@@",
+      "- ${4:old}",
+      "+ ${5:new}",
+      "*** End Patch",
+      "```"
+    ],
+    "description": "Quick template for Copilot code edits"
+  }
+}

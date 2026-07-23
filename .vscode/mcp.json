@@ -1,0 +1,11 @@
+{
+    "servers": {
+        "laravel-boost": {
+            "command": "/usr/bin/php8.5",
+            "args": [
+                "~/php/laravel/web/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}

@@ -1,103 +1,103 @@
 <template>
-  <v-container class="fill-height" fluid>
-    <v-row align="center" justify="center">
-      <v-col cols="12" sm="8" md="6" lg="4">
-        <v-card>
-          <v-card-title class="text-h5 text-center py-4">Register</v-card-title>
-          
-          <v-card-text>
-            <v-form @submit.prevent="handleRegister">
-              <v-text-field
-                v-model="name"
-                label="Name"
-                outlined
-                class="mb-4"
-                required
-              />
-              
-              <v-text-field
-                v-model="email"
-                label="Email"
-                type="email"
-                outlined
-                class="mb-4"
-                required
-              />
-              
-              <v-text-field
-                v-model="password"
-                label="Password"
-                type="password"
-                outlined
-                class="mb-4"
-                required
-              />
+  <div class="auth-page">
+    <el-card class="auth-card">
+      <template #header>
+        <div class="auth-header">Register</div>
+      </template>
 
-              <v-text-field
-                v-model="passwordConfirmation"
-                label="Confirm Password"
-                type="password"
-                outlined
-                class="mb-4"
-                required
-              />
+      <el-form :model="form" label-width="0" @submit.prevent="handleRegister">
+        <el-form-item>
+          <el-input v-model="form.name" placeholder="Name" />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="form.email" placeholder="Email" type="email" />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="form.password" placeholder="Password" type="password" />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="form.passwordConfirmation" placeholder="Confirm password" type="password" />
+        </el-form-item>
 
-              <v-alert v-if="error" type="error" class="mb-4">
-                {{ error }}
-              </v-alert>
+        <el-alert v-if="error" :title="error" type="error" show-icon class="mb-4" />
 
-              <v-btn
-                type="submit"
-                color="primary"
-                block
-                :loading="loading"
-              >
-                Register
-              </v-btn>
-            </v-form>
-          </v-card-text>
+        <el-button type="primary" native-type="submit" :loading="loading" class="w-full">
+          Register
+        </el-button>
+      </el-form>
 
-          <v-card-text class="text-center">
-            Already have an account?
-            <router-link to="/login">Login here</router-link>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+      <div class="auth-links">
+        <router-link to="/login">Already have an account?</router-link>
+      </div>
+    </el-card>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import { reactive, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/domains";
 
-const router = useRouter()
-const authStore = useAuthStore()
+const router = useRouter();
+const authStore = useUserStore();
 
-const name = ref('')
-const email = ref('')
-const password = ref('')
-const passwordConfirmation = ref('')
-const loading = ref(false)
-const error = ref('')
+const form = reactive({ name: "", email: "", password: "", passwordConfirmation: "" });
+const loading = ref(false);
+const error = ref("");
 
 const handleRegister = async () => {
-  if (password.value !== passwordConfirmation.value) {
-    error.value = 'Passwords do not match'
-    return
+  if (form.password !== form.passwordConfirmation) {
+    error.value = "Passwords do not match";
+    return;
   }
 
-  loading.value = true
-  error.value = ''
-  
+  loading.value = true;
+  error.value = "";
+
   try {
-    await authStore.register(name.value, email.value, password.value, passwordConfirmation.value)
-    router.push('/tasks')
+    await authStore.register(
+      form.name,
+      form.email,
+      form.password,
+      form.passwordConfirmation,
+    );
+    router.push("/tasks");
   } catch (err: any) {
-    error.value = err.response?.data?.message || 'Registration failed'
+    error.value = err.response?.data?.message || "Registration failed";
   } finally {
-    loading.value = false
+    loading.value = false;
   }
-}
+};
 </script>
+
+<style scoped>
+.auth-page {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: min(100%, 460px);
+}
+
+.auth-header {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.auth-links {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}
+</style>

@@ -1,0 +1,8 @@
+- index.html
+  - main.ts - createApp().mount()
+    - App.vue
+    - styles.css
+    - router
+      - [Login](src/pages/Login.vue)
+      - [Register](src/pages/Register.vue)
+      - [Tasks](src/pages/Tasks.vue)

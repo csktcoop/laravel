@@ -1,48 +1,55 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
-import { useAuthStore } from '../stores/auth'
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from "vue-router";
+import { useUserStore } from "@/domains";
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/login',
-    name: 'Login',
-    component: () => import('../pages/Login.vue'),
+    path: "/login",
+    name: "Login",
+    component: () => import("../pages/Login.vue"),
   },
   {
-    path: '/register',
-    name: 'Register',
-    component: () => import('../pages/Register.vue'),
+    path: "/register",
+    name: "Register",
+    component: () => import("../pages/Register.vue"),
   },
   {
-    path: '/tasks',
-    name: 'Tasks',
-    component: () => import('../pages/Tasks.vue'),
+    path: "/tasks",
+    name: "Tasks",
+    component: () => import("../pages/Tasks.vue"),
     meta: { requiresAuth: true },
   },
   {
-    path: '/',
-    redirect: '/tasks',
+    path: "/",
+    redirect: "/tasks",
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-})
+});
 
 router.beforeEach(async (to, _, next) => {
-  const authStore = useAuthStore()
+  const authStore = useUserStore();
 
   if (authStore.token && !authStore.user) {
-    await authStore.fetchCurrentUser()
+    await authStore.fetchCurrentUser();
   }
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next('/login')
-  } else if ((to.path === '/login' || to.path === '/register') && authStore.isAuthenticated) {
-    next('/tasks')
+    next("/login");
+  } else if (
+    (to.path === "/login" || to.path === "/register") &&
+    authStore.isAuthenticated
+  ) {
+    next("/tasks");
   } else {
-    next()
+    next();
   }
-})
+});
 
-export default router
+export default router;

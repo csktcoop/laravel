@@ -1,7 +1,7 @@
 const AUTH_TOKEN_KEY = "auth_token";
 
 export const authStorage = {
-  get() : string | null {
+  get(): string | null {
     return localStorage.getItem(AUTH_TOKEN_KEY);
   },
   set(token: string): void {
@@ -10,4 +10,4 @@ export const authStorage = {
   remove(): void {
     localStorage.removeItem(AUTH_TOKEN_KEY);
   },
-}
+};

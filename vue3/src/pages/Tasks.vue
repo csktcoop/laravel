@@ -2,26 +2,63 @@
   <div class="tasks-page">
     <div class="page-header">
       <h1>Tasks</h1>
-      <el-button type="primary" @click="showCreateDialog = true">New Task</el-button>
+      <el-button role="button" type="primary" @click="showCreateDialog = true"
+        >New Task</el-button
+      >
     </div>
 
     <el-card class="toolbar-card">
       <div class="toolbar">
-        <el-input v-model="searchTitle" placeholder="Search by title" clearable @input="onSearchChange" />
-        <el-select v-model="filterStatus" placeholder="Status" clearable @change="onFilterChange">
-          <el-option v-for="item in statusOptions" :key="item.value" :label="item.title" :value="item.value" />
+        <el-input
+          v-model="searchTitle"
+          placeholder="Search by title"
+          clearable
+          @input="onSearchChange"
+        />
+        <el-select
+          v-model="filterStatus"
+          placeholder="Status"
+          clearable
+          @change="onFilterChange"
+        >
+          <el-option
+            v-for="item in statusOptions"
+            :key="item.value"
+            :label="item.title"
+            :value="item.value"
+          />
         </el-select>
-        <el-select v-if="authStore.user?.role === 'admin'" v-model="filterAssignedTo" placeholder="Assigned to" clearable @change="onFilterChange">
-          <el-option v-for="item in assignees" :key="item.id" :label="item.name" :value="item.id" />
+        <el-select
+          v-if="authStore.user?.role === 'admin'"
+          v-model="filterAssignedTo"
+          placeholder="Assigned to"
+          clearable
+          @change="onFilterChange"
+        >
+          <el-option
+            v-for="item in assignees"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          />
         </el-select>
       </div>
     </el-card>
 
     <el-card class="content-card">
       <el-progress v-if="taskStore.loading" :indeterminate="true" />
-      <el-alert v-if="taskStore.error" :title="taskStore.error" type="error" show-icon class="mb-4" />
+      <el-alert
+        v-if="taskStore.error"
+        :title="taskStore.error"
+        type="error"
+        show-icon
+        class="mb-4"
+      />
 
-      <el-empty v-if="taskStore.tasks.length === 0" description="No tasks found" />
+      <el-empty
+        v-if="taskStore.tasks.length === 0"
+        description="No tasks found"
+      />
 
       <el-table v-else :data="filteredTasks" stripe>
         <el-table-column prop="title" label="Title" />
@@ -43,8 +80,12 @@
         </el-table-column>
         <el-table-column label="Actions" width="120">
           <template #default="{ row }">
-            <el-button link type="primary" @click="editTask(row)">Edit</el-button>
-            <el-button link type="danger" @click="deleteTask(row.id)">Delete</el-button>
+            <el-button role="button" link type="primary" @click="editTask(row)"
+              >Edit</el-button
+            >
+            <el-button role="button" link type="danger" @click="deleteTask(row.id)"
+              >Delete</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -60,7 +101,11 @@
       />
     </el-card>
 
-    <el-dialog v-model="showCreateDialog" :title="editingTask ? 'Edit Task' : 'Create Task'" width="560px">
+    <el-dialog
+      v-model="showCreateDialog"
+      :title="editingTask ? 'Edit Task' : 'Create Task'"
+      width="560px"
+    >
       <el-form :model="formData" label-width="100px" @submit.prevent="saveTask">
         <el-form-item label="Title">
           <el-input v-model="formData.title" required />
@@ -70,24 +115,49 @@
         </el-form-item>
         <el-form-item label="Status">
           <el-select v-model="formData.status" placeholder="Select status">
-            <el-option v-for="item in statusOptions" :key="item.value" :label="item.title" :value="item.value" />
+            <el-option
+              v-for="item in statusOptions"
+              :key="item.value"
+              :label="item.title"
+              :value="item.value"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Assign to">
-          <el-select v-model="formData.assigned_to" placeholder="Select assignee" clearable>
-            <el-option v-for="item in assignees" :key="item.id" :label="item.name" :value="item.id" />
+          <el-select
+            v-model="formData.assigned_to"
+            placeholder="Select assignee"
+            clearable
+          >
+            <el-option
+              v-for="item in assignees"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="Due date">
-          <el-date-picker v-model="formData.due_date" type="date" format="YYYY-MM-DD" value-format="YYYY-MM-DD" />
+          <el-date-picker
+            v-model="formData.due_date"
+            type="date"
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
+          />
         </el-form-item>
-        <el-alert v-if="formError" :title="formError" type="error" show-icon class="mb-4" />
+        <el-alert
+          v-if="formError"
+          :title="formError"
+          type="error"
+          show-icon
+          class="mb-4"
+        />
       </el-form>
 
       <template #footer>
         <span class="dialog-footer">
-          <el-button @click="closeDialog">Cancel</el-button>
-          <el-button type="primary" :loading="formLoading" @click="saveTask">
+          <el-button role="button" @click="closeDialog">Cancel</el-button>
+          <el-button role="button" type="primary" :loading="formLoading" @click="saveTask">
             {{ editingTask ? 'Update' : 'Create' }}
           </el-button>
         </span>
@@ -97,14 +167,17 @@
 </template>
 
 <script setup lang="ts">
-import api, { buildRequestConfig, createAbortController, isCancellationError } from "@/shared/api";
 import { computed, onMounted, ref, watch } from "vue";
-import { isAxiosError } from "axios";
-import { useUserStore } from "@/domains";
-import { useTaskStore } from "@/domains";
 import TaskStatusTag from "@/components/TaskStatusTag.vue";
+import { useTaskStore, useUserStore } from "@/domains";
 import type { Task } from "@/domains/task/model";
 import type { User } from "@/domains/user/model";
+import api, {
+  buildRequestConfig,
+  createAbortController,
+  getApiErrorMessage,
+  isCancellationError,
+} from "@/shared/api";
 
 const taskStore = useTaskStore();
 const authStore = useUserStore();
@@ -251,12 +324,7 @@ const saveTask = async () => {
     }
     closeDialog();
   } catch (error: unknown) {
-    let msg = "Failed to save task";
-    if (isAxiosError(error)) {
-      msg =
-        error.response?.data?.message ?? msg;
-    }
-    formError.value = msg;
+    formError.value = getApiErrorMessage(error, "Failed to save task");
   } finally {
     formLoading.value = false;
   }
@@ -307,6 +375,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+/* biome-ignore-all lint/correctness/noUnknownPseudoClass: Vue's :deep() selector is required for scoped styles. */
 .tasks-page {
   display: flex;
   flex-direction: column;

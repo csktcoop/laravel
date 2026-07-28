@@ -13,15 +13,34 @@
           <el-input v-model="form.email" placeholder="Email" type="email" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.password" placeholder="Password" type="password" />
+          <el-input
+            v-model="form.password"
+            placeholder="Password"
+            type="password"
+          />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.passwordConfirmation" placeholder="Confirm password" type="password" />
+          <el-input
+            v-model="form.passwordConfirmation"
+            placeholder="Confirm password"
+            type="password"
+          />
         </el-form-item>
 
-        <el-alert v-if="error" :title="error" type="error" show-icon class="mb-4" />
+        <el-alert
+          v-if="error"
+          :title="error"
+          type="error"
+          show-icon
+          class="mb-4"
+        />
 
-        <el-button type="primary" native-type="submit" :loading="loading" class="w-full">
+        <el-button
+          type="primary"
+          native-type="submit"
+          :loading="loading"
+          class="w-full"
+        >
           Register
         </el-button>
       </el-form>
@@ -37,11 +56,17 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/domains";
+import { getApiErrorMessage } from "@/shared/api";
 
 const router = useRouter();
 const authStore = useUserStore();
 
-const form = reactive({ name: "", email: "", password: "", passwordConfirmation: "" });
+const form = reactive({
+  name: "",
+  email: "",
+  password: "",
+  passwordConfirmation: "",
+});
 const loading = ref(false);
 const error = ref("");
 
@@ -62,8 +87,8 @@ const handleRegister = async () => {
       form.passwordConfirmation,
     );
     router.push("/tasks");
-  } catch (err: any) {
-    error.value = err.response?.data?.message || "Registration failed";
+  } catch (err: unknown) {
+    error.value = getApiErrorMessage(err, "Registration failed");
   } finally {
     loading.value = false;
   }

@@ -5,17 +5,32 @@
         <div class="auth-header">Login</div>
       </template>
 
-      <el-form :model="form" label-width="0" @submit.prevent="handleLogin">
+      <el-form :model="formLogin" label-width="0" @submit.prevent="handleLogin">
         <el-form-item>
-          <el-input v-model="form.email" placeholder="Email" type="email" />
+          <el-input v-model="formLogin.email" placeholder="Email" type="email" />
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.password" placeholder="Password" type="password" />
+          <el-input
+            v-model="formLogin.password"
+            placeholder="Password"
+            type="password"
+          />
         </el-form-item>
 
-        <el-alert v-if="error" :title="error" type="error" show-icon class="mb-4" />
+        <el-alert
+          v-if="error"
+          :title="error"
+          type="error"
+          show-icon
+          class="mb-4"
+        />
 
-        <el-button type="primary" native-type="submit" :loading="loading" class="w-full">
+        <el-button
+          type="primary"
+          native-type="submit"
+          :loading="loading"
+          class="w-full"
+        >
           Login
         </el-button>
       </el-form>
@@ -37,11 +52,12 @@
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/domains";
+import { getApiErrorMessage } from "@/shared/api";
 
 const router = useRouter();
 const authStore = useUserStore();
 
-const form = reactive({ email: "", password: "" });
+const formLogin = reactive({ email: "", password: "" });
 const loading = ref(false);
 const error = ref("");
 
@@ -50,10 +66,10 @@ const handleLogin = async () => {
   error.value = "";
 
   try {
-    await authStore.login(form.email, form.password);
+    await authStore.login(formLogin.email, formLogin.password);
     router.push("/tasks");
-  } catch (err: any) {
-    error.value = err.response?.data?.message || "Login failed";
+  } catch (err: unknown) {
+    error.value = getApiErrorMessage(err, "Login failed");
   } finally {
     loading.value = false;
   }

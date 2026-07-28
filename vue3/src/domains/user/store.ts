@@ -1,8 +1,7 @@
-import api, {
-  initApiClient, buildRequestConfig, setAuthToken } from "@/shared/api";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import type { User } from "@/domains/user/model";
+import api, { buildRequestConfig, initApiClient, setAuthToken } from "@/shared/api";
 import { authStorage } from "@/shared/util/auth-storage";
 
 export const useUserStore = defineStore("auth", () => {
@@ -16,11 +15,7 @@ export const useUserStore = defineStore("auth", () => {
   }
 
   const login = async (email: string, password: string) => {
-    const response = await api.post(
-      "/login",
-      { email, password },
-      buildRequestConfig(),
-    );
+    const response = await api.post("/login", { email, password }, buildRequestConfig());
     const tokenValue = response.data.token as string;
     token.value = tokenValue;
     user.value = response.data.user;
@@ -59,7 +54,7 @@ export const useUserStore = defineStore("auth", () => {
     setAuthToken(null);
   };
 
-  initApiClient()
+  initApiClient();
   const fetchCurrentUser = async () => {
     try {
       const response = await api.get("/me", buildRequestConfig());

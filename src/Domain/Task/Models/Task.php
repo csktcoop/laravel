@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Task extends Model
 {
+    /** @use HasFactory<TaskFactory> */
     use HasFactory;
 
     public const STATUS = [
@@ -19,18 +20,14 @@ class Task extends Model
     ];
 
     /**
-     * The model's default values for attributes.
-     *
-     * @var array
+     * {inheritdoc}
      */
     protected $attributes = [
         'status' => 'todo',
     ];
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
+     * {inheritdoc}
      */
     protected $fillable = [
         'title',
@@ -52,11 +49,14 @@ class Task extends Model
     /**
      * Define or resolved into Database\Factories\Domain\Task\Models\TaskFactory
      */
-    public static function newFactory()
+    public static function newFactory(): TaskFactory
     {
         return TaskFactory::new();
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Models\User, $this>
+     */
     public function assignee(): BelongsTo
     {
         return $this->belongsTo(User::class, foreignKey: 'assigned_to');

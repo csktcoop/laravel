@@ -25,8 +25,10 @@ class TaskController extends Controller
             'created' => $request->input('created'),
         ];
 
+        /** @var \App\Models\User $user */
+        $user = $request->user();
         return view('task::index', [
-            'tasks'          => $this->taskRepo->getFilteredTasksForUser($request->user()->id(), $filters),
+            'tasks'          => $this->taskRepo->getFilteredTasksForUser($user->id, $filters),
             'STATUS'         => Task::STATUS, // Still using constant for UI
             'filter_status'  => $filters['status'],
             'filter_created' => $filters['created'],
@@ -36,7 +38,7 @@ class TaskController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): void
     {
         //
     }
@@ -50,7 +52,9 @@ class TaskController extends Controller
             'message' => 'required|string|max:255',
         ]);
 
-        $this->taskRepo->createForUser($request->user()->id(), $validated);
+        /** @var \App\Models\User $user */
+        $user = $request->user();
+        $this->taskRepo->createForUser($user->id, $validated);
 
         return redirect(route('tasks.index'));
     }
@@ -58,7 +62,7 @@ class TaskController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Task $task)
+    public function show(Task $task): void
     {
         //
     }

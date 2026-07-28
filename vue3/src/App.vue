@@ -3,14 +3,21 @@
     <el-header class="app-header">
       <div class="brand">Team Task Manager</div>
       <div class="header-actions">
-        <el-dropdown v-if="authStore.isAuthenticated" trigger="click" @command="handleMenuCommand">
+        <el-dropdown
+          v-if="authStore.isAuthenticated"
+          trigger="click"
+          @command="handleMenuCommand"
+        >
           <span class="user-menu-trigger">
             <el-icon><User /></el-icon>
             <span>{{ authStore.user?.name }}</span>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item disabled>{{ authStore.user?.name }} ({{ authStore.user?.role }})</el-dropdown-item>
+              <el-dropdown-item disabled
+                >{{ authStore.user?.name }}
+                ({{ authStore.user?.role }})</el-dropdown-item
+              >
               <el-dropdown-item command="logout">Logout</el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -24,10 +31,10 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from "@domains/user";
 import { User } from "@element-plus/icons-vue";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useUserStore } from "@domains/user";
 
 const router = useRouter();
 const authStore = useUserStore();

@@ -1,8 +1,9 @@
 export {
-  default,
   buildRequestConfig,
-  initApiClient,
   createAbortController,
+  default,
+  getApiErrorMessage,
+  initApiClient,
   isCancellationError,
   setAuthToken,
 } from "./client";

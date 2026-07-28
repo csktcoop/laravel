@@ -26,6 +26,12 @@ This repository keeps documentation intentionally small and focused:
 
 See [TECH_STACKS.md](TECH_STACKS.md) for exact runtime and dependency requirements.
 
+#### OS Setup (unverified)
+
+`make init`
+
+This installs Nix, PHP 8, Node 24 and pnpm
+
 ### Setup
 
 From the project root:

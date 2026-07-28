@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "audit": "echo 'This should be in automated weekly schedule' && pnpm audit",
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "dev:r": "pnpm add -D",
+    "dev:rm": "pnpm remove",
+    "dev:preview": "vite preview",
+    "prod:i1": "pnpm install --frozen-lockfile",
+    "prod:build": "vite build",
+    "prod:i2": "pnpm install --frozen-lockfile --prod",
+    "lint": "biome check --write --no-errors-on-unmatched --files-ignore-unknown=true"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.2",

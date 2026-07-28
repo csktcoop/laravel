@@ -1,5 +1,7 @@
 /* Global styles for the Element Plus app shell */
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
   margin: 0;
 }

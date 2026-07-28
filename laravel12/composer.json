@@ -45,8 +45,22 @@
     "scripts": {
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1 --timeout=0\" \"php artisan pail --timeout=0\" \"cd ../vue3 && pnpm dev\" --names=backend,queue,logs,frontend --kill-others"
+            "trap 'kill 0' EXIT; php artisan serve & cd ../vue3 && pnpm dev"
         ],
+        "dev:full": [
+            "Composer\\Config::disableProcessTimeout",
+            "trap 'kill 0' EXIT; php artisan serve & php artisan queue:work --sleep=3 --tries=1 --max-time=3600 & php artisan pail --timeout=0 & cd ../vue3 && pnpm dev"
+        ],
+        "dev:i": [ "composer install" ],
+        "dev:dump": [" composer dumpautoload" ],
+        "dev:r": [ "composer require --dev" ],
+        "dev:rm": [ "composer remove" ],
+        "dev:lint": [ "vendor/bin/phpstan analyse ../src config database --memory-limit=1G" ],
+        "prod:i": [
+            "composer install --optimize-autoloader --no-dev --no-interaction --no-plugins --no-scripts",
+            "php artisan optimize"
+        ],
+        "prod:dump": [" composer dumpautoload --optimize --no-dev" ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi"

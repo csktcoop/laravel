@@ -1,11 +1,11 @@
-import api, {
-  initApiClient,
-  buildRequestConfig,
-  createAbortController,
-  isCancellationError,
-} from "@/shared/api";
 import { defineStore } from "pinia";
 import { ref } from "vue";
+import api, {
+  buildRequestConfig,
+  createAbortController,
+  initApiClient,
+  isCancellationError,
+} from "@/shared/api";
 import type { PaginatedResponse, Task } from "./model";
 
 export const useTaskStore = defineStore("task", () => {
@@ -17,12 +17,8 @@ export const useTaskStore = defineStore("task", () => {
   const error = ref<string | null>(null);
   let activeTasksRequest: AbortController | null = null;
 
-  initApiClient()
-  const fetchTasks = async (
-    page: number = 1,
-    status?: string,
-    assignedTo?: number,
-  ) => {
+  initApiClient();
+  const fetchTasks = async (page: number = 1, status?: string, assignedTo?: number) => {
     loading.value = true;
     error.value = null;
     activeTasksRequest?.abort();
@@ -56,11 +52,7 @@ export const useTaskStore = defineStore("task", () => {
 
   const createTask = async (taskData: Partial<Task>) => {
     try {
-      const response = await api.post<Task>(
-        "/tasks",
-        taskData,
-        buildRequestConfig(),
-      );
+      const response = await api.post<Task>("/tasks", taskData, buildRequestConfig());
       tasks.value.unshift(response.data);
       return response.data;
     } catch (err) {
@@ -72,11 +64,7 @@ export const useTaskStore = defineStore("task", () => {
 
   const updateTask = async (id: number, taskData: Partial<Task>) => {
     try {
-      const response = await api.put<Task>(
-        `/tasks/${id}`,
-        taskData,
-        buildRequestConfig(),
-      );
+      const response = await api.put<Task>(`/tasks/${id}`, taskData, buildRequestConfig());
       const index = tasks.value.findIndex((t) => t.id === id);
       if (index !== -1) {
         tasks.value[index] = response.data;

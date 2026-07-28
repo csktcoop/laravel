@@ -1,0 +1,11 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - ../src
+
+    viewDirectories:
+        - ../src/Domain/Task/Resources/views
+
+    level: 8

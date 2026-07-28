@@ -1,26 +1,31 @@
 {
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "html": {
-    "experimentalFullSupportEnabled": true,
-    "formatter": {
-      "enabled": true
-    },
-    "parser": {
-      "vue": true
-    }
+
+  "files": {
+    "ignoreUnknown": true
   },
+
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+
   "linter": {
     "rules": {
       "a11y": {
-        "noNoninteractiveElementInteractions": "info"
+        "noNoninteractiveElementInteractions": "info",
+        "useSemanticElements": "info"
       }
     }
   },
+
   "assist": {
     "actions": {
       "source": {
@@ -28,8 +33,11 @@
       }
     }
   },
-  "formatter": {
-    "indentStyle": "space",
-    "indentWidth": 2
+
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "parser": {
+      "vue": true
+    }
   }
 }

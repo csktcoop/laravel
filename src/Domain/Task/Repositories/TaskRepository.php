@@ -6,13 +6,16 @@ use Illuminate\Support\Collection;
 
 class TaskRepository implements TaskRepositoryInterface
 {
+    /**
+     * {inheritdoc}
+     */
     public function getFilteredTasksForUser(int $userId, array $filters): Collection
     {
-        $query = Task::with('user')
+        $query = Task::with('assignee')
             ->where('user_id', $userId)
             ->latest();
 
-        if (isset($filters['status']) && $filters['status'] !== null) {
+        if (isset($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
@@ -37,7 +40,7 @@ class TaskRepository implements TaskRepositoryInterface
 
     public function delete(Task $task): bool
     {
-        return $task->delete();
+        return (bool) $task->delete();
     }
 
 }

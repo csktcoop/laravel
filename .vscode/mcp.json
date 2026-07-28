@@ -1,9 +1,9 @@
 {
     "servers": {
         "laravel-boost": {
-            "command": "/usr/bin/php8.5",
+            "command": "~/.nix-profile/bin/php",
             "args": [
-                "~/php/laravel/web/artisan",
+                "~/php/laravel/laravel12/artisan",
                 "boost:mcp"
             ]
         }

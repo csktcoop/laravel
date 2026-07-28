@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type AxiosRequestConfig } from "axios";
+import axios, { type AxiosError, type AxiosRequestConfig, isAxiosError } from "axios";
 import { authStorage } from "@/shared/util/auth-storage";
 
 const api = axios.create({
@@ -8,12 +8,25 @@ const api = axios.create({
   },
 });
 
-export const createAbortController = (): AbortController =>
-  new AbortController();
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401 || error?.response?.status === 403) {
+      setAuthToken(null);
+      authStorage.remove();
 
-export const buildRequestConfig = (
-  controller?: AbortController,
-): AxiosRequestConfig => {
+      if (typeof window !== "undefined" && window.location.pathname !== "/login") {
+        window.location.assign("/login");
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export const createAbortController = (): AbortController => new AbortController();
+
+export const buildRequestConfig = (controller?: AbortController): AxiosRequestConfig => {
   if (!controller) {
     return {};
   }
@@ -24,9 +37,15 @@ export const buildRequestConfig = (
 };
 
 export const isCancellationError = (error: unknown): boolean => {
-  return (
-    axios.isCancel(error) || (error as AxiosError)?.code === "ERR_CANCELED"
-  );
+  return axios.isCancel(error) || (error as AxiosError)?.code === "ERR_CANCELED";
+};
+
+export const getApiErrorMessage = (error: unknown, fallback: string): string => {
+  if (isAxiosError(error)) {
+    return error.response?.data?.message ?? fallback;
+  }
+
+  return fallback;
 };
 
 export const setAuthToken = (token: string | null): void => {
@@ -44,10 +63,7 @@ export const initApiClient = (): typeof api => {
   }
 
   // To agent: The token in localStorage is insecure
-  const savedToken =
-    typeof window !== "undefined"
-      ? authStorage.get()
-      : null;
+  const savedToken = typeof window !== "undefined" ? authStorage.get() : null;
 
   if (savedToken) {
     setAuthToken(savedToken);

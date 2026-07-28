@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Checking Biome...\" && cd vue3 && npx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true && echo \"Checking Larastan...\" && cd ../laravel12 && ./vendor/bin/phpstan analyse ../src --memory-limit=1G",
+    "lint": "clear && echo \"Checking Larastan...\" && cd ${BACKEND_DIR:-laravel12} && composer run dev:lint",
+    "lint-full": "echo \"Checking Biome...\" && (cd ${FRONTEND_DIR:-vue3} && pnpm run lint) && echo \"Checking Larastan...\" && (cd ${BACKEND_DIR:-laravel12} && composer run dev:lint)",
     "prepare": "husky"
   },
   "keywords": [],

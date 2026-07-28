@@ -5,6 +5,7 @@ namespace Domain\Task\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
+use App\Models\User;
 use Domain\Task\Models\Task;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,7 @@ class TaskController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::user();
         $query = Task::query();
 
@@ -53,6 +55,7 @@ class TaskController extends Controller
     public function store(StoreTaskRequest $request): JsonResponse
     {
         $validated = $request->validated();
+        /** @var User $user */
         $user = Auth::user();
 
         if (!$this->canUserModifyTask($user, $validated['assigned_to'] ?? null)) {
@@ -69,6 +72,7 @@ class TaskController extends Controller
      */
     public function show(Task $task): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::user();
 
         if (!$this->canUserViewTask($user, $task)) {
@@ -84,6 +88,7 @@ class TaskController extends Controller
     public function update(UpdateTaskRequest $request, Task $task): JsonResponse
     {
         $validated = $request->validated();
+        /** @var User $user */
         $user = Auth::user();
 
         if (!$this->canUserViewTask($user, $task)) {
@@ -100,6 +105,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task): JsonResponse
     {
+        /** @var User $user */
         $user = Auth::user();
 
         if (!$this->canUserViewTask($user, $task)) {
@@ -115,7 +121,7 @@ class TaskController extends Controller
      * Check if user can modify a task (create or assign to someone).
      * Users can only create/modify tasks for themselves unless they are admin.
      */
-    private function canUserModifyTask($user, ?int $assignedTo): bool
+    private function canUserModifyTask(User $user, ?int $assignedTo): bool
     {
         if ($user->role === 'admin') {
             return true;
@@ -128,7 +134,7 @@ class TaskController extends Controller
      * Check if user can view/edit/delete a task.
      * Users can only access their own tasks unless they are admin.
      */
-    private function canUserViewTask($user, Task $task): bool
+    private function canUserViewTask(User $user, Task $task): bool
     {
         if ($user->role === 'admin') {
             return true;

@@ -1,8 +1,4 @@
-import {
-  createRouter,
-  createWebHistory,
-  type RouteRecordRaw,
-} from "vue-router";
+import { createRouter, createWebHistory, type RouteRecordRaw } from "vue-router";
 import { useUserStore } from "@/domains";
 
 const routes: RouteRecordRaw[] = [
@@ -42,10 +38,7 @@ router.beforeEach(async (to, _, next) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next("/login");
-  } else if (
-    (to.path === "/login" || to.path === "/register") &&
-    authStore.isAuthenticated
-  ) {
+  } else if ((to.path === "/login" || to.path === "/register") && authStore.isAuthenticated) {
     next("/tasks");
   } else {
     next();

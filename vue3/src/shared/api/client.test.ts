@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import api, {
   buildRequestConfig,
   createAbortController,
+  getApiErrorMessage,
   setAuthToken,
 } from "./client";
 
@@ -20,5 +21,18 @@ describe("api client helpers", () => {
 
     expect(config.signal).toBe(controller.signal);
     controller.abort();
+  });
+
+  it("extracts a server message from axios errors and falls back otherwise", () => {
+    const fallback = "Request failed";
+    const axiosError = {
+      isAxiosError: true,
+      response: {
+        data: { message: "Email already taken" },
+      },
+    };
+
+    expect(getApiErrorMessage(axiosError, fallback)).toBe("Email already taken");
+    expect(getApiErrorMessage(new Error("boom"), fallback)).toBe(fallback);
   });
 });

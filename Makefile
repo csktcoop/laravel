@@ -13,9 +13,11 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 	@:
 
 BACKEND_DIR ?= laravel12
-BACKEND_HOST := localhost
-BACKEND_PORT := 8000
+BACKEND_HOST ?= 127.0.0.1
+BACKEND_PORT ?= 8000
 FRONTEND_DIR ?= vue3
+FRONTEND_HOST ?= 127.0.0.1
+FRONTEND_PORT ?= 5173
 
 help:
 	@echo "Available commands:"
@@ -41,12 +43,13 @@ install:
 		echo "Skipping key-gen and seeding."; \
 	fi
 	@echo "Setting up Vue3..."
-	@cd $(FRONTEND_DIR) && pnpm install
+	@$(MAKE) fe-i
 	@cd $(FRONTEND_DIR) && cp -n .env.example .env || true
 
 dev:
-#	$(MAKE) -j4 be-serve be-queue be-log fe-dev
 	$(MAKE) -j2 be-serve fe-dev
+dev-full:
+	$(MAKE) -j4 be-serve be-queue be-log fe-dev
 
 be:
 	@cd $(BACKEND_DIR) && $(ARGS)
@@ -55,7 +58,13 @@ be-dev:
 	$(MAKE) -j3 be-serve be-queue be-log
 
 be-serve:
-	@cd $(BACKEND_DIR) && php artisan serve --host=$(BACKEND_HOST) --port=$(BACKEND_PORT)
+	@cd $(BACKEND_DIR) && \
+	if curl -fsS --max-time 2 http://$(BACKEND_HOST):$(BACKEND_PORT)/ >/dev/null 2>&1; then \
+		PID=$$(lsof -t -i :$(BACKEND_PORT)); \
+		echo "Laravel already running on http://$(BACKEND_HOST):$(BACKEND_PORT); Stop it with \"kill $$PID\""; \
+	else \
+		php artisan serve --host=$(BACKEND_HOST) --port=$(BACKEND_PORT); \
+	fi
 be-queue:
 	@cd $(BACKEND_DIR) && php artisan queue:work --sleep=3 --tries=1 --max-time=3600
 be-log:
@@ -70,19 +79,30 @@ fe:
 	@cd $(FRONTEND_DIR) && $(ARGS)
 
 fe-dev:
-#   DEBUG=vite:* pnpm dev
-	@cd $(FRONTEND_DIR) && pnpm dev
+#   DEBUG=vite:* bun dev
+	@cd $(FRONTEND_DIR) && \
+	if curl -fsS --max-time 2 http://$(FRONTEND_HOST):$(FRONTEND_PORT)/ >/dev/null 2>&1; then \
+		PID=$$(lsof -t -i :$(FRONTEND_PORT)); \
+		echo "Vite already running on http://$(FRONTEND_HOST):$(FRONTEND_PORT); Stop it with \"kill $$PID\""; \
+	else \
+		bun run dev --host $(FRONTEND_HOST) --port $(FRONTEND_PORT); \
+	fi
 
 fe-build:
-	@cd $(FRONTEND_DIR) && pnpm build
+	@cd $(FRONTEND_DIR) && bun build
+
+fe-i:
+	@cd $(FRONTEND_DIR) && pnpm install
 
 lint:
 	@echo "Linting Backend..."
 	@cd $(BACKEND_DIR) && ./vendor/bin/pint --parallel
 	@echo "Linting Frontend..."
-	@cd $(FRONTEND_DIR) && pnpm lint
+	@cd $(FRONTEND_DIR) && bun lint
 
 init:
 	@curl --proto '=https' --tlsv1.3 -sSf -L https://install.determinate.systems/nix | sh -s -- install
 	@nix --extra-experimental-features "nix-command flakes" profile add nixpkgs#php83 nixpkgs#nodejs_24 nixpkgs#pnpm
 	@pnpm setup
+	@curl -fsSL https://bun.com/install | bash
+	@source ~/.bashrc

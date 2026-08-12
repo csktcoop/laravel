@@ -1,6 +1,6 @@
 # Vue 3 frontend
 
-This folder contains the Vue 3 client for the task manager app. It is a small Vite + Vue + Pinia + Vue Router project that talks to the Laravel backend through Axios.
+This folder contains the Vue 3 client for the task manager app. It is a small Vite + Vue + Pinia + Vue Router project that talks to the Laravel backend through Axios. The UI is built with Element Plus and uses @element-plus/icons-vue for icons.
 
 ## Project entry points
 

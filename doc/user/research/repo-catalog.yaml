@@ -1,0 +1,1133 @@
+catalog_version: "2.0"
+
+items:
+
+  - id: topoteretes/cognee
+    name: cognee
+    title: Persistent memory and knowledge graph layer for AI agents
+    url: https://github.com/topoteretes/cognee
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, agent-engineering, web-development]
+      function: [memory, knowledge-graph, retrieval]
+      layer: [agent-runtime, knowledge, data]
+      interface: [library, api]
+      runtime: [python, local, server]
+      resource: [server-required]
+
+    use_when:
+      - Agents need persistent context across sessions
+      - Project decisions, entities, and relationships must be recalled later
+      - Vector retrieval alone is insufficient
+
+    avoid_when:
+      - The project only needs short-lived task context
+      - A simple file-based memory layer is sufficient
+      - Operational complexity must remain minimal
+
+    ecosystem:
+      layer: agent-runtime
+      role: persistent-memory-and-knowledge-graph
+
+    benefit:
+      type: architecture
+      value: persistent cross-session memory
+      quantified:
+        - "Hybrid graph and vector retrieval"
+        - "add -> cognify -> search lifecycle"
+      evidence: repository-description
+
+    ram-4gb: unknown
+
+    combine:
+      with: [lightrag, falkordb, graphify, book-to-skill]
+      complements: [graphrag, trace-mcp]
+      overlaps: [lightrag, graphrag]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: high
+      adopt: adopt-partial
+      adopt_parts:
+        - project-memory lifecycle
+        - memory retention policy
+        - entity and relationship extraction
+        - stale-memory evaluation
+      benchmark:
+        - memory recall accuracy
+        - stale-memory rate
+        - contradictory-memory rate
+
+  - id: mattpocock/skills
+    name: mattpocock-skills
+    title: Engineering skills for AI coding agents
+    url: https://github.com/mattpocock/skills
+    adoption: main-list
+
+    tags:
+      domain: [web-development, ai-agents, agent-engineering]
+      function: [agent-skills, architecture, code-understanding]
+      layer: [agent-runtime, developer-workflow]
+      interface: [skills]
+      runtime: [local]
+      resource: [ram-4gb]
+
+    use_when:
+      - Building a reusable engineering playbook
+      - Separating planning, implementation, testing, and debugging behaviors
+      - Replacing one large system prompt with composable skills
+
+    avoid_when:
+      - A single-purpose automation script is enough
+      - Skills are being copied without adapting them to the project
+
+    ecosystem:
+      layer: agent-runtime
+      role: composable-engineering-skill-library
+
+    benefit:
+      type: workflow
+      value: reusable engineering procedures
+      quantified:
+        - "Approximately 17 skill files reported in repository walkthroughs"
+        - "Large GitHub adoption signal"
+      evidence: repository-and-community-description
+
+    ram-4gb: verified
+    ram-4gb_scope: skill-instruction-execution
+    ram-4gb_note: >
+      The skills themselves are lightweight; model memory and agent host
+      requirements remain separate.
+
+    combine:
+      with: [graphify, trace-mcp, hallmark, system-design-primer, rtk, caveman]
+      complements: [cognee, book-to-skill, openwork]
+      overlaps: [hallmark, book-to-skill]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: very-high
+      adopt: adopt-full
+      adopt_parts:
+        - skill granularity
+        - skill naming
+        - frontmatter structure
+        - planning and debugging workflows
+        - review and handoff patterns
+      benchmark:
+        - first-attempt acceptance-test pass rate
+        - regression count
+        - unreviewed destructive actions
+
+  - id: Graphify-Labs/graphify
+    name: graphify
+    title: Codebase and document knowledge graph generator
+    url: https://github.com/Graphify-Labs/graphify
+    adoption: main-list
+
+    tags:
+      domain: [web-development, ai-agents, developer-tools]
+      function: [code-understanding, dependency-analysis, knowledge-graph]
+      layer: [developer-workflow, knowledge, agent-runtime]
+      interface: [cli, skills, graph]
+      runtime: [python, local]
+      resource: [ram-4gb, cpu-only]
+
+    use_when:
+      - An agent must understand an unfamiliar repository
+      - Code, SQL schemas, configuration, and documentation must be connected
+      - Dependency-aware change planning is required
+
+    avoid_when:
+      - The repository is very small
+      - A simple file search answers the question
+      - The graph does not justify indexing cost
+
+    ecosystem:
+      layer: developer-workflow
+      role: static-repository-understanding
+
+    benefit:
+      type: code-understanding
+      value: queryable repository structure
+      quantified:
+        - "Produces graph.html"
+        - "Produces GRAPH_REPORT.md"
+        - "Produces graph.json"
+        - "Uses local deterministic parsing"
+      evidence: repository-description
+
+    ram-4gb: plausible
+    ram-4gb_note: >
+      Requires project-size benchmarking; do not treat local parsing as
+      proof of 4 GB compatibility.
+
+    combine:
+      with: [trace-mcp, system-design-primer, mattpocock-skills, cognee]
+      complements: [lightrag, graphrag]
+      overlaps: [trace-mcp]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: very-high
+      adopt: adopt-partial
+      adopt_parts:
+        - repository mapping
+        - dependency exploration
+        - change-impact questions
+        - source-linked project reports
+      benchmark:
+        - onboarding time
+        - missed-dependency rate
+        - change-impact precision
+
+  - id: HKUDS/Vibe-Trading
+    name: vibe-trading
+    title: Tool-heavy multi-agent research workspace
+    url: https://github.com/HKUDS/Vibe-Trading
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, developer-tools, finance]
+      function: [orchestration, memory, backtesting, workflow]
+      layer: [agent-runtime, orchestration, developer-workflow]
+      interface: [cli, api, tools]
+      runtime: [python, local, server]
+      resource: [server-required]
+
+    use_when:
+      - Agent runs need reproducible configuration and artifacts
+      - Tools, memory, skills, and sub-agents must be explicitly orchestrated
+      - Generated work requires regression or backtesting
+
+    avoid_when:
+      - Trading or research workflows are irrelevant
+      - A simple request-response agent is sufficient
+      - Autonomous external actions cannot be isolated
+
+    ecosystem:
+      layer: agent-runtime
+      role: reproducible-tool-heavy-orchestration
+
+    benefit:
+      type: workflow
+      value: reproducible agent runs
+      quantified:
+        - "31 documented or auto-discovered tools"
+        - "452 alphas reported across four alpha libraries"
+        - "Run-level memory and artifacts"
+      evidence: repository-description
+
+    ram-4gb: unknown
+
+    combine:
+      with: [mattpocock-skills, rtk, trace-mcp, cognee, openwork]
+      complements: [system-design-primer]
+      overlaps: [openwork]
+      replaces: []
+      incompatible_with:
+        - unrestricted-production-autonomy
+
+    decision:
+      web_playbook_value: medium
+      adopt: adopt-partial
+      adopt_parts:
+        - run cards
+        - tool registry
+        - artifact recording
+        - per-run memory
+        - bounded autonomy
+      benchmark:
+        - run reproducibility
+        - artifact completeness
+        - tool-call success rate
+
+  - id: donnemartin/system-design-primer
+    name: system-design-primer
+    title: System design and scalable architecture reference
+    url: https://github.com/donnemartin/system-design-primer
+    adoption: main-list
+
+    tags:
+      domain: [web-development, system-design, backend]
+      function: [architecture, code-understanding]
+      layer: [backend, infrastructure, developer-workflow]
+      interface: [library, skills]
+      runtime: [local]
+      resource: [ram-4gb]
+
+    use_when:
+      - An agent must design or review a scalable web system
+      - Requirements, traffic, storage, latency, and failure modes need explicit analysis
+      - Architecture alternatives must be compared
+
+    avoid_when:
+      - The task is a small isolated UI change
+      - Current framework-specific implementation details are required
+      - Educational architecture patterns would be excessive
+
+    ecosystem:
+      layer: developer-workflow
+      role: architecture-reference-and-review-checklist
+
+    benefit:
+      type: architecture
+      value: more complete design reasoning
+      quantified:
+        - "Multiple system-design solutions"
+        - "Anki flashcards"
+        - "Multiple language translations"
+      evidence: repository-description
+
+    ram-4gb: verified
+    ram-4gb_scope: document-retrieval-and-skill-use
+    ram-4gb_note: >
+      Local model requirements are separate from repository resource needs.
+
+    combine:
+      with: [mattpocock-skills, graphify, graphrag, lightrag]
+      complements: [trace-mcp, falkordb]
+      overlaps: []
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: very-high
+      adopt: adopt-partial
+      adopt_parts:
+        - requirement clarification
+        - capacity estimation
+        - bottleneck analysis
+        - failure-mode review
+        - trade-off tables
+      benchmark:
+        - design-review completeness
+        - assumption coverage
+        - identified failure modes
+
+  - id: OpenCut-app/OpenCut
+    name: opencut
+    title: Open-source CapCut alternative
+    url: https://github.com/OpenCut-app/OpenCut
+    adoption: low-list
+
+    tags:
+      domain: [web-development, frontend, media]
+      function: [media-editing, workflow]
+      layer: [frontend, backend, desktop]
+      interface: [web-ui, desktop]
+      runtime: [browser, typescript]
+      resource: []
+
+    use_when:
+      - Building timeline-based or media-heavy web applications
+      - Studying non-destructive editing and complex UI state
+      - Evaluating browser and desktop media workflows
+
+    avoid_when:
+      - Building ordinary CRUD applications
+      - A stable editor platform is required immediately
+      - Media processing is outside the product domain
+
+    ecosystem:
+      layer: frontend
+      role: stateful-media-application-reference
+
+    benefit:
+      type: architecture
+      value: reference for complex interactive state
+      quantified:
+        - "Web, desktop, and mobile targets"
+        - "Three releases reported in retrieved GitHub metadata"
+      evidence: repository-description
+
+    ram-4gb: unknown
+
+    combine:
+      with: [mattpocock-skills, hallmark, comfyui]
+      complements: [openwork]
+      overlaps: []
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: medium
+      adopt: study
+      adopt_parts:
+        - timeline state model
+        - undo and redo
+        - media pipeline boundaries
+        - performance-sensitive UI patterns
+
+  - id: Nutlope/hallmark
+    name: hallmark
+    title: Anti-AI-slop design skill
+    url: https://github.com/Nutlope/hallmark
+    adoption: low-list
+
+    tags:
+      domain: [web-development, frontend, ai-agents]
+      function: [agent-skills, design-quality]
+      layer: [frontend, agent-runtime, developer-workflow]
+      interface: [skills, web-ui]
+      runtime: [local, browser]
+      resource: [ram-4gb]
+
+    use_when:
+      - Generated interfaces look generic or visually repetitive
+      - A design brief must become concrete layout and style constraints
+      - UI quality needs a pre-implementation critique step
+
+    avoid_when:
+      - A strict existing design system must be followed exactly
+      - Visual experimentation is not relevant
+      - The skill would impose themes instead of project requirements
+
+    ecosystem:
+      layer: frontend
+      role: design-quality-gate
+
+    benefit:
+      type: design-quality
+      value: more deliberate generated UI
+      quantified:
+        - "20 advertised themes"
+        - "Four advertised design verbs"
+        - "Eight documented recipes"
+      evidence: repository-description
+
+    ram-4gb: verified
+    ram-4gb_scope: skill-instruction-execution
+
+    combine:
+      with: [mattpocock-skills, opencut, system-design-primer]
+      complements: [rtk, caveman]
+      overlaps: [mattpocock-skills]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: high
+      adopt: adopt-partial
+      adopt_parts:
+        - design brief format
+        - visual critique checklist
+        - typography and spacing constraints
+        - anti-default UI checks
+      benchmark:
+        - accessibility score
+        - responsive behavior
+        - visual hierarchy score
+        - design-review score
+
+  - id: virgiliojr94/book-to-skill
+    name: book-to-skill
+    title: Technical document to agent-skill converter
+    url: https://github.com/virgiliojr94/book-to-skill
+    adoption: low-list
+
+    tags:
+      domain: [ai-agents, agent-engineering, developer-tools]
+      function: [document-ingestion, agent-skills]
+      layer: [knowledge, agent-runtime, developer-workflow]
+      interface: [cli, skills]
+      runtime: [python, local]
+      resource: [ram-4gb]
+
+    use_when:
+      - Internal manuals or technical books should become reusable skills
+      - A team wants to compile source material into agent instructions
+      - Skill generation needs a repeatable import process
+
+    avoid_when:
+      - Source material is outdated or poorly structured
+      - No human review is available
+      - Exact legal, medical, or safety wording must be preserved automatically
+
+    ecosystem:
+      layer: knowledge
+      role: knowledge-to-skill-compiler
+
+    benefit:
+      type: document-ingestion
+      value: reusable skills from technical documents
+      quantified:
+        - "Supports PDF, EPUB, DOCX, HTML, Markdown, RTF, and text formats"
+        - "Targets multiple coding-agent environments"
+      evidence: repository-description
+
+    ram-4gb: plausible
+    ram-4gb_note: >
+      Depends on document size, conversion tools, and the selected model.
+
+    combine:
+      with: [mattpocock-skills, cognee, system-design-primer]
+      complements: [lightrag, graphrag]
+      overlaps: [mattpocock-skills]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: high
+      adopt: adopt-partial
+      adopt_parts:
+        - document normalization
+        - chapter extraction
+        - framework extraction
+        - human-reviewed skill generation
+        - source citation preservation
+      benchmark:
+        - extraction accuracy
+        - citation retention
+        - obsolete-guidance detection
+
+  - id: usekaneo/kaneo
+    name: kaneo
+    title: Minimal self-hosted project-management application
+    url: https://github.com/usekaneo/kaneo
+    adoption: low-list
+
+    tags:
+      domain: [web-development, project-management, developer-tools]
+      function: [project-management, workflow]
+      layer: [frontend, backend, infrastructure]
+      interface: [web-ui, api]
+      runtime: [typescript, docker, server]
+      resource: []
+
+    use_when:
+      - An agent needs a small persistent task and project model
+      - Self-hosting and simple workflows are priorities
+      - Larger project-management tools create unnecessary complexity
+
+    avoid_when:
+      - Advanced portfolio planning or enterprise workflow is required
+      - The playbook only needs ephemeral task state
+      - A project-management product is not part of the agent architecture
+
+    ecosystem:
+      layer: developer-workflow
+      role: task-and-project-state
+
+    benefit:
+      type: workflow
+      value: minimal persistent task model
+      quantified:
+        - "Approximately 3.7k stars and 346 forks reported"
+        - "Version 2.15.0 activity reported in August 2026"
+      evidence: repository-metadata
+
+    ram-4gb: unknown
+
+    combine:
+      with: [mattpocock-skills, cognee, openwork]
+      complements: [vibe-trading]
+      overlaps: []
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: medium
+      adopt: study
+      adopt_parts:
+        - task model
+        - project model
+        - status transitions
+        - self-hosting approach
+
+  - id: different-ai/openwork
+    name: openwork
+    title: Open-source desktop workspace for AI agents
+    url: https://github.com/different-ai/openwork
+    adoption: low-list
+
+    tags:
+      domain: [ai-agents, developer-tools, web-development]
+      function: [orchestration, workflow]
+      layer: [desktop, agent-runtime, infrastructure]
+      interface: [desktop, cli, api]
+      runtime: [local, typescript]
+      resource: []
+
+    use_when:
+      - Agents need controlled access to local project files
+      - Desktop-to-agent orchestration is required
+      - Human approval must surround filesystem or external side effects
+
+    avoid_when:
+      - A server-only agent is sufficient
+      - Workspace permissions are not yet designed
+      - Fast-changing desktop dependencies are unacceptable
+
+    ecosystem:
+      layer: desktop
+      role: local-agent-workspace-and-approval-boundary
+
+    benefit:
+      type: orchestration
+      value: safer local-agent operation
+      quantified:
+        - "Supports macOS, Windows, and Linux"
+        - "Includes a CLI-first orchestrator mode"
+        - "Frequent alpha and rolling releases reported"
+      evidence: repository-description
+
+    ram-4gb: unknown
+
+    combine:
+      with: [mattpocock-skills, vibe-trading, rtk, trace-mcp]
+      complements: [cognee, kaneo]
+      overlaps: [vibe-trading]
+      replaces: []
+      incompatible_with:
+        - unrestricted-file-access
+
+    decision:
+      web_playbook_value: medium
+      adopt: study
+      adopt_parts:
+        - workspace selection
+        - approval gates
+        - host/server separation
+        - CLI-first orchestration
+        - local file boundaries
+
+  - id: Comfy-Org/ComfyUI
+    name: comfyui
+    title: Node-based generative workflow engine
+    url: https://github.com/Comfy-Org/ComfyUI
+    adoption: low-list
+
+    tags:
+      domain: [ai-agents, media, developer-tools]
+      function: [workflow, orchestration]
+      layer: [orchestration, backend, desktop]
+      interface: [web-ui, api, graph, workflow]
+      runtime: [python, local, gpu-required]
+      resource: [gpu-required]
+
+    use_when:
+      - Agent workflows need explicit stages and typed connections
+      - Visual inspection of complex pipelines is useful
+      - Model, parameter, and artifact provenance must be preserved
+
+    avoid_when:
+      - A simple sequential script is sufficient
+      - GPU-heavy media workflows are irrelevant
+      - GPL-3.0 licensing is incompatible with the deployment model
+
+    ecosystem:
+      layer: orchestration
+      role: declarative-graph-workflow-engine
+
+    benefit:
+      type: workflow
+      value: inspectable multi-stage execution
+      quantified:
+        - "Approximately 14.6k forks reported"
+        - "149 releases reported"
+        - "Graph and node interface"
+      evidence: repository-description
+
+    ram-4gb: fails
+    ram-4gb_note: >
+      The base application may start under constrained conditions, but
+      practical diffusion workflows generally require substantially more
+      memory and often a GPU.
+
+    combine:
+      with: [opencut, openwork, graphify]
+      complements: [mattpocock-skills, vibe-trading]
+      overlaps: [workflow-orchestration]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: medium
+      adopt: study
+      adopt_parts:
+        - explicit workflow stages
+        - typed inputs and outputs
+        - artifact provenance
+        - graph-based execution review
+
+  - id: HKUDS/LightRAG
+    name: lightrag
+    title: Lightweight graph-plus-vector retrieval framework
+    url: https://github.com/HKUDS/LightRAG
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, web-development, data]
+      function: [rag, retrieval, knowledge-graph]
+      layer: [data, knowledge, agent-runtime]
+      interface: [library, api, web-ui]
+      runtime: [python, local, server]
+      resource: [server-required]
+
+    use_when:
+      - Retrieval must follow entities and relationships
+      - Vector search alone misses multi-hop context
+      - A lighter graph-RAG starting point is preferred
+
+    avoid_when:
+      - A small vector or keyword index is sufficient
+      - Dataset size does not justify graph extraction
+      - A verified 4 GB deployment is required
+
+    ecosystem:
+      layer: data
+      role: lightweight-graph-rag
+
+    benefit:
+      type: retrieval
+      value: graph-aware retrieval over documents
+      quantified:
+        - "Graph and vector retrieval modes"
+        - "Web UI and API support"
+        - "47 releases reported in retrieved GitHub metadata"
+      evidence: repository-description-and-release-metadata
+
+    ram-4gb: unknown
+
+    combine:
+      with: [cognee, falkordb, graphify, book-to-skill]
+      complements: [trace-mcp]
+      overlaps: [graphrag, cognee]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: high
+      adopt: adopt-partial
+      adopt_parts:
+        - graph-plus-vector retrieval
+        - entity extraction
+        - relationship extraction
+        - query modes
+        - retrieval evaluation
+
+  - id: rtk-ai/rtk
+    name: rtk
+    title: Rust Token Killer CLI proxy
+    url: https://github.com/rtk-ai/rtk
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, developer-tools, web-development]
+      function: [token-reduction, workflow]
+      layer: [agent-runtime, developer-workflow]
+      interface: [cli, hooks]
+      runtime: [rust, local]
+      resource: [ram-4gb, cpu-only]
+
+    use_when:
+      - Agents repeatedly consume noisy shell output
+      - Command output is the main context-window bottleneck
+      - A local zero-dependency CLI proxy is acceptable
+
+    avoid_when:
+      - Exact unfiltered output is required
+      - The command is not supported by the proxy
+      - Output transformation could hide debugging information
+
+    ecosystem:
+      layer: agent-runtime
+      role: tool-output-compression
+
+    benefit:
+      type: token-efficiency
+      value: reduced CLI-output tokens
+      quantified:
+        - "Repository claim: 60-90% token reduction on common development commands"
+        - "Single Rust binary"
+        - "Zero runtime dependencies claimed"
+      evidence: repository-description
+
+    ram-4gb: verified
+    ram-4gb_scope: cli-proxy
+    ram-4gb_note: >
+      Verify peak memory for large diffs, logs, test output, and monorepos.
+
+    combine:
+      with: [caveman, trace-mcp, mattpocock-skills, openwork]
+      complements: [graphify]
+      overlaps: [caveman]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: very-high
+      adopt: adopt-full
+      adopt_parts:
+        - command-specific output renderers
+        - shell integration
+        - agent hooks
+        - raw-output fallback
+      benchmark:
+        - token reduction
+        - command latency
+        - information-loss rate
+        - debugging success rate
+
+  - id: nikolai-vysotskyi/trace-mcp
+    name: trace-mcp
+    title: Cross-language dependency graph exposed through MCP
+    url: https://github.com/nikolai-vysotskyi/trace-mcp
+    adoption: main-list
+
+    tags:
+      domain: [web-development, ai-agents, developer-tools]
+      function: [tracing, dependency-analysis, code-understanding]
+      layer: [developer-workflow, agent-runtime]
+      interface: [mcp, cli, graph]
+      runtime: [local]
+      resource: [ram-4gb]
+
+    use_when:
+      - The agent needs interactive dependency questions
+      - Cross-language call and import relationships matter
+      - MCP-native code navigation is preferred
+
+    avoid_when:
+      - Static repository reports are sufficient
+      - The repository language is unsupported
+      - Full semantic analysis is required but only syntactic tracing is available
+
+    ecosystem:
+      layer: developer-workflow
+      role: interactive-dependency-analysis
+
+    benefit:
+      type: code-understanding
+      value: dependency-aware code navigation
+      quantified:
+        - "Cross-language dependency graph"
+        - "MCP interface for coding agents"
+      evidence: repository-description
+
+    ram-4gb: plausible
+    ram-4gb_note: >
+      Benchmark against repository size and number of supported languages.
+
+    combine:
+      with: [graphify, rtk, mattpocock-skills, falkordb]
+      complements: [cognee, system-design-primer]
+      overlaps: [graphify]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: high
+      adopt: benchmark-first
+      adopt_parts:
+        - dependency graph queries
+        - MCP tool interface
+        - impact-analysis prompts
+      benchmark:
+        - dependency-query latency
+        - graph completeness
+        - false dependency rate
+        - change-impact precision
+
+  - id: JuliusBrussee/caveman
+    name: caveman
+    title: Token-saving terse communication skill
+    url: https://github.com/JuliusBrussee/caveman
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, agent-engineering, web-development]
+      function: [token-reduction, agent-skills]
+      layer: [agent-runtime]
+      interface: [skills, hooks]
+      runtime: [local]
+      resource: [ram-4gb]
+
+    use_when:
+      - Agent responses contain repetitive prose
+      - MCP tool descriptions are unnecessarily verbose
+      - Concise status reporting is preferred
+
+    avoid_when:
+      - Explanations must be highly readable for nontechnical users
+      - Safety instructions could be lost through compression
+      - Ambiguous terse language would create implementation risk
+
+    ecosystem:
+      layer: agent-runtime
+      role: response-and-instruction-compression
+
+    benefit:
+      type: token-efficiency
+      value: shorter agent communication
+      quantified:
+        - "Repository claim: approximately 65% token reduction"
+        - "Claude Code skill format"
+      evidence: repository-description
+
+    ram-4gb: verified
+    ram-4gb_scope: skill-instruction-execution
+
+    combine:
+      with: [rtk, mattpocock-skills, trace-mcp]
+      complements: [hallmark, openwork]
+      overlaps: [rtk, mattpocock-skills]
+      replaces: []
+      incompatible_with:
+        - user-facing-explanation-mode
+
+    decision:
+      web_playbook_value: high
+      adopt: adopt-partial
+      adopt_parts:
+        - terse internal status format
+        - compact tool descriptions
+        - concise progress reports
+        - explicit verbose-mode escape hatch
+      benchmark:
+        - token reduction
+        - task success rate
+        - clarification-request rate
+        - safety-instruction retention
+
+  - id: FalkorDB/FalkorDB
+    name: falkordb
+    title: Graph database for knowledge graphs and GraphRAG
+    url: https://github.com/FalkorDB/FalkorDB
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, data, backend]
+      function: [graph-database, knowledge-graph, rag]
+      layer: [storage, data, backend]
+      interface: [api, library, graph]
+      runtime: [server, docker]
+      resource: [server-required]
+
+    use_when:
+      - Knowledge graphs need durable graph storage
+      - Graph queries must operate as a database service
+      - GraphRAG needs a dedicated persistence layer
+
+    avoid_when:
+      - A local in-memory graph is sufficient
+      - The application does not need graph traversal
+      - Operational simplicity is more important than graph capability
+
+    ecosystem:
+      layer: storage
+      role: graph-database-and-graph-rag-storage
+
+    benefit:
+      type: storage
+      value: persistent graph query layer
+      quantified:
+        - "GraphBLAS-backed sparse adjacency representation"
+        - "GraphRAG SDK available in the ecosystem"
+      evidence: repository-and-ecosystem-description
+
+    ram-4gb: unknown
+
+    combine:
+      with: [lightrag, graphrag, cognee, graphify]
+      complements: [trace-mcp]
+      overlaps: []
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: medium
+      adopt: study
+      adopt_parts:
+        - graph persistence
+        - graph query patterns
+        - GraphRAG storage adapter
+        - graph indexing strategy
+
+  - id: microsoft/graphrag
+    name: graphrag
+    title: Modular graph-based retrieval-augmented generation system
+    url: https://github.com/microsoft/graphrag
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, data, web-development]
+      function: [rag, retrieval, knowledge-graph, document-ingestion]
+      layer: [data, knowledge, agent-runtime]
+      interface: [library, cli]
+      runtime: [python, local, server]
+      resource: [server-required]
+
+    use_when:
+      - Global or thematic questions must be answered over large document collections
+      - Entity and relationship extraction is valuable
+      - Hierarchical community summaries improve retrieval
+
+    avoid_when:
+      - The corpus is small
+      - Simple semantic retrieval is adequate
+      - Indexing cost and LLM calls must be minimal
+
+    ecosystem:
+      layer: data
+      role: structured-document-rag-pipeline
+
+    benefit:
+      type: retrieval
+      value: structured and hierarchical retrieval
+      quantified:
+        - "Indexing pipeline extracts structured data from unstructured text"
+        - "Benchmarking datasets are available in the ecosystem"
+      evidence: official-documentation
+
+    ram-4gb: unknown
+
+    combine:
+      with: [falkordb, cognee, book-to-skill, system-design-primer]
+      complements: [graphify, trace-mcp]
+      overlaps: [lightrag]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: high
+      adopt: adopt-partial
+      adopt_parts:
+        - indexing pipeline
+        - entity extraction
+        - community detection
+        - global and local search concepts
+        - retrieval benchmarking
+
+  - id: 0xPlaygrounds/rig
+    name: rig
+    title: Modular Rust framework for LLM applications and agents
+    url: https://github.com/0xPlaygrounds/rig
+    adoption: main-list
+
+    tags:
+      domain: [ai-agents, web-development, developer-tools]
+      function: [orchestration, agent-skills, retrieval]
+      layer: [agent-runtime, backend, orchestration]
+      interface: [library, api]
+      runtime: [rust, server]
+      resource: [server-required]
+
+    use_when:
+      - Building a typed Rust agent service
+      - Provider abstraction and structured tools are important
+      - Performance, modularity, and compile-time guarantees matter
+
+    avoid_when:
+      - The team is primarily Python or TypeScript
+      - Rapid prompt experimentation is more important than type safety
+      - Rust service operations are not yet supported
+
+    ecosystem:
+      layer: agent-runtime
+      role: typed-agent-application-framework
+
+    benefit:
+      type: architecture
+      value: modular and typed agent services
+      quantified:
+        - "Unified API across multiple model providers"
+        - "Type-safe tools and structured output"
+      evidence: framework-description
+
+    ram-4gb: plausible
+    ram-4gb_note: >
+      Framework overhead may fit within 4 GB, but model hosting and
+      retrieval services must be measured separately.
+
+    combine:
+      with: [falkordb, lightrag, trace-mcp, mattpocock-skills]
+      complements: [rtk, cognee]
+      overlaps: [agent-frameworks]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: medium
+      adopt: study
+      adopt_parts:
+        - provider abstraction
+        - typed tool definitions
+        - structured output
+        - modular agent composition
+
+  - id: gianpd/agemem
+    name: agemem
+    title: Inference-only hybrid long-term and short-term memory layer for AI agents
+    url: https://github.com/gianpd/agemem
+    adoption: planned
+
+    tags:
+      domain: [ai-agents, agent-engineering, developer-tools]
+      function: [memory, retrieval, agent-skills]
+      layer: [agent-runtime, knowledge, data]
+      interface: [library, api]
+      runtime: [python, local]
+      resource: [local-model]
+
+    use_when:
+      - Agents need unified short-term and long-term memory
+      - Memory must be managed during inference rather than model retraining
+      - Privacy, local execution, or consumer-hardware deployment is important
+
+    avoid_when:
+      - Short-lived context or simple file notes are sufficient
+      - A mature production memory service is required immediately
+      - Memory quality cannot be evaluated for stale, contradictory, or irrelevant entries
+
+    ecosystem:
+      layer: agent-runtime
+      role: inference-time hybrid memory management
+
+    benefit:
+      type: memory
+      value: unified long-term and short-term memory for local agents
+      quantified:
+        - "Long-term and short-term memory management"
+        - "Inference-only operation claimed"
+        - "Privacy-first and any-hardware deployment claimed"
+      evidence: repository-claim
+
+    ram-4gb: unknown
+    ram-4gb_note: >
+      The repository describes deployment on standard hardware but does not
+      provide a reproducible 4 GB RAM test. Model size, embedding backend,
+      vector storage, and concurrent context must be measured separately.
+
+    combine:
+      with: [mattpocock-skills, vibe-trading, cognee, lightrag]
+      complements: [graphify, trace-mcp, system-design-primer]
+      overlaps: [cognee, lightrag]
+      replaces: []
+      incompatible_with: []
+
+    decision:
+      web_playbook_value: high
+      adopt: benchmark-first
+      adopt_parts:
+        - unified short-term and long-term memory model
+        - inference-time memory operations
+        - local-first privacy boundary
+        - memory write and retrieval evaluation
+      benchmark:
+        - memory recall accuracy
+        - stale-memory rate
+        - contradictory-memory rate
+        - context-token reduction
+        - peak RAM under representative agent workloads
+
+    validation_notes: >
+      The repository identity is unambiguous. The canonical GitHub search result
+      describes AgeMem as an inference-only, privacy-first long-term and
+      short-term memory layer for agents on any hardware; the 4 GB claim remains
+      unverified because no reproducible repository deployment benchmark was found.

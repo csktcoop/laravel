@@ -1,0 +1,26 @@
+models:
+  - name: Qwen2.5 Coder Chat
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    apiBase: http://192.168.1.11:11434
+
+    roles:
+      - chat
+
+    defaultCompletionOptions:
+      contextLength: 2048
+
+  - name: Qwen2.5 Coder Autocomplete
+    provider: ollama
+    model: qwen2.5-coder:1.5b
+    apiBase: http://192.168.1.11:11434
+
+    roles:
+      - autocomplete
+
+    defaultCompletionOptions:
+      contextLength: 1024
+
+    autocompleteOptions:
+      debounceDelay: 500
+      maxPromptTokens: 512

@@ -94,8 +94,8 @@
         v-if="taskStore.lastPage > 1"
         class="pagination"
         v-model:current-page="currentPage"
-        :page-size="1"
-        :total="taskStore.lastPage"
+        :page-size="20"
+        :total="taskStore.total"
         layout="prev, pager, next"
         @current-change="onPageChange"
       />
@@ -125,9 +125,12 @@
         </el-form-item>
         <el-form-item label="Assign to">
           <el-select
+            :key="showCreateDialog"
             v-model="formData.assigned_to"
             placeholder="Select assignee"
             clearable
+            :disabled="!isAdmin"
+            :teleported="false"
           >
             <el-option
               v-for="item in assignees"
@@ -202,7 +205,7 @@ const statusOptions = [
 
 type TaskForm = {
   title: string;
-  description: string;
+  description: string | null;
   status: Task["status"];
   assigned_to: number | null;
   due_date: string | null;
@@ -210,9 +213,9 @@ type TaskForm = {
 
 const emptyForm = (): TaskForm => ({
   title: "",
-  description: "",
+  description: null,
   status: "todo",
-  assigned_to: null,
+  assigned_to: (authStore.user?.id ?? null),
   due_date: "",
 });
 
@@ -241,6 +244,8 @@ const normalizeDateValue = (value?: string | null): string => {
   return datePart === "0000-00-00" ? "" : datePart;
 };
 
+const isAdmin = computed(() => authStore.user?.role === 'admin');
+
 const fetchUsers = async () => {
   if (!authStore.user) {
     assignees.value = [];
@@ -249,6 +254,7 @@ const fetchUsers = async () => {
 
   if (authStore.user.role !== "admin") {
     assignees.value = [authStore.user];
+    formData.value.assigned_to = authStore.user.id;
     return;
   }
 
@@ -275,11 +281,8 @@ const onFilterChange = () => {
     currentPage.value,
     filterStatus.value || undefined,
     filterAssignedTo.value || undefined,
+    searchTitle.value || undefined,
   );
-};
-
-const onSearchChange = () => {
-  // Search is done client-side on the filtered tasks
 };
 
 const onPageChange = (page: number) => {
@@ -287,6 +290,7 @@ const onPageChange = (page: number) => {
     page,
     filterStatus.value || undefined,
     filterAssignedTo.value || undefined,
+    searchTitle.value || undefined,
   );
 };
 
@@ -294,11 +298,12 @@ const editTask = (task: Task) => {
   editingTask.value = task;
   formData.value = {
     title: task.title,
-    description: task.description || "",
+    description: task.description || null,
     status: task.status,
-    assigned_to: task.assigned_to ?? null,
+    assigned_to: task.assigned_to ?? (!isAdmin.value ? (authStore.user?.id ?? null) : null),
     due_date: normalizeDateValue(task.due_date),
   };
+
   showCreateDialog.value = true;
 };
 
@@ -358,6 +363,7 @@ const closeDialog = () => {
   showCreateDialog.value = false;
   editingTask.value = null;
   formData.value = emptyForm();
+  // formData.value?.resetFields();
   formError.value = "";
 };
 

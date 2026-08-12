@@ -73,9 +73,9 @@ flowchart TD
 - `pinia`: chosen for state management because it is simple, TypeScript-friendly, and fits the small-to-medium app scope without Vuex’s boilerplate.
 - `vue-router`: enables route-based navigation and protects pages through auth-aware guards.
 - `axios`: chosen as the HTTP client because it supports request cancellation, interceptors, and predictable JSON handling for API calls.
-- `vuetify`: selected as the UI component library so the app can ship a consistent Material-style interface quickly without building every component from scratch.
-- `@mdi/js`: used to provide the icon set that meshes with Vuetify’s component styling and keeps the UI visually consistent.
-- `vite-plugin-vuetify`: integrates Vuetify with Vite so component auto-imports and build behavior stay aligned with the modern frontend toolchain.
+- `element-plus`: selected as the UI component library so the app can ship a consistent interface quickly without building every component from scratch.
+- `@element-plus/icons-vue`: used to provide the icon set that matches the Element Plus design system.
+- `vite`: chosen for fast local refresh and a lightweight build pipeline that keeps the Vue app aligned with modern frontend tooling.
 
 ### Architecture-scope decisions
 

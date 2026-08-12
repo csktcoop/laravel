@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\Task;
 use App\Models\User;
+use Domain\Task\Models\Task;
 
 class TaskPolicy
 {
@@ -12,7 +12,7 @@ class TaskPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -20,7 +20,11 @@ class TaskPolicy
      */
     public function view(User $user, Task $task): bool
     {
-        return $task->user()->is($user);
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        return $task->assigned_to === $user->id;
     }
 
     /**
@@ -36,7 +40,11 @@ class TaskPolicy
      */
     public function update(User $user, Task $task): bool
     {
-        return $task->user()->is($user);
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        return $task->assigned_to === $user->id;
     }
 
     /**
@@ -60,6 +68,6 @@ class TaskPolicy
      */
     public function forceDelete(User $user, Task $task): bool
     {
-        return true;
+        return false;
     }
 }

@@ -18,7 +18,12 @@ export const useTaskStore = defineStore("task", () => {
   let activeTasksRequest: AbortController | null = null;
 
   initApiClient();
-  const fetchTasks = async (page: number = 1, status?: string, assignedTo?: number) => {
+  const fetchTasks = async (
+    page: number = 1,
+    status?: string,
+    assignedTo?: number,
+    title?: string,
+  ) => {
     loading.value = true;
     error.value = null;
     activeTasksRequest?.abort();
@@ -29,6 +34,7 @@ export const useTaskStore = defineStore("task", () => {
       };
       if (status) params.status = status;
       if (assignedTo) params.assigned_to = assignedTo;
+      if (title) params.title = title;
 
       const response = await api.get<PaginatedResponse<Task>>("/tasks", {
         params,

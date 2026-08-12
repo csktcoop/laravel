@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "lint": "clear && echo \"Checking Larastan...\" && cd ${BACKEND_DIR:-laravel12} && composer run dev:lint",
-    "lint-full": "echo \"Checking Biome...\" && (cd ${FRONTEND_DIR:-vue3} && pnpm run lint) && echo \"Checking Larastan...\" && (cd ${BACKEND_DIR:-laravel12} && composer run dev:lint)",
+    "lint": "echo \"Checking Biome...\" && (cd ${FRONTEND_DIR:-vue3} && pnpm run lint) && echo \"Checking Larastan...\" && (cd ${BACKEND_DIR:-laravel12} && COMPOSER_ALLOW_SUPERUSER=1 composer run dev:lint)",
     "prepare": "husky"
   },
   "keywords": [],
@@ -15,5 +14,6 @@
   "devDependencies": {
     "husky": "^9.1.7",
     "typescript": "^7.0.2"
-  }
+  },
+  "packageManager": "pnpm@11.17.0+sha512.cca3cea332ad254bb84145f966d19f4879615210346fc92c79a047f23a0d7b3cca3c3792f0076ba1f1831d277efbcf0a9119b31a9a60eca7fb3d6231f331ef72"
 }

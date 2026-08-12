@@ -1,7 +1,7 @@
 export interface Task {
   id: number;
   title: string;
-  description?: string;
+  description: string | null;
   status: "todo" | "in_progress" | "done";
   assigned_to: number | null;
   due_date: string | null;

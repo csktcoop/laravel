@@ -3,10 +3,10 @@
 This checklist captures the gaps needed to make the workspace feel more like a senior-level full-stack demo.
 
 ## Architecture and code quality
-- [ ] Strengthen the separation between domain, application, and infrastructure concerns in both Laravel and Vue code.
-- [ ] Standardize naming, folder structure, and module boundaries across the monorepo.
-- [ ] Reduce duplication and improve consistency in shared types, utilities, and API integration patterns.
-- [ ] Improve code comments and documentation so the project is easier to navigate for reviewers.
+- [x] Strengthen the separation between domain, application, and infrastructure concerns in both Laravel and Vue code.
+- [x] Standardize naming, folder structure, and module boundaries across the monorepo.
+- [x] Reduce duplication and improve consistency in shared types, utilities, and API integration patterns.
+- [x] Improve code comments and documentation so the project is easier to navigate for reviewers.
 
 ## Backend
 - [ ] Finish authorization behavior so admin and user permissions are clearly enforced and easy to reason about.
@@ -32,3 +32,7 @@ This checklist captures the gaps needed to make the workspace feel more like a s
 - [ ] Update the README so it clearly explains setup, assumptions, limitations, and demo credentials.
 - [ ] Add screenshots, a short walkthrough, or a polished demo narrative.
 - [ ] Ensure the repository feels complete enough to share with recruiters or hiring managers.
+
+## CMS at Japanese standard
+
+https://www.frameworks.co.jp/support/manual/2.8/sb6r230000002u1k.html

@@ -31,7 +31,7 @@ This document is the authoritative stack reference for the current repository st
 - Vue 3
 - Vue Router
 - Pinia
-- Vuetify
+- Element Plus
 - Axios
 - TypeScript
 - Vite 5
@@ -41,10 +41,11 @@ This document is the authoritative stack reference for the current repository st
 
 ## Tooling and workflow
 
-- pnpm for JavaScript dependency management across the monorepo
-- Composer for PHP package management inside laravel12
-- Husky 9.1.7 for Git hooks
-- Biome 2.5.3 for frontend linting and formatting
+- pnpm for JavaScript dependency management across the monorepo (for managing packages only)
+- bun for running scripts (bun run ...), executing binaries (bunx) or even web server (?).
+- Composer for PHP package management inside Laravel
+- Husky for Git hooks
+- Biome for frontend linting and formatting
 - Root package.json orchestrates combined quality checks for frontend and backend
 - Makefile provides the main local workflow: install, dev, lint, and test commands
 

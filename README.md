@@ -26,6 +26,10 @@ This repository keeps documentation intentionally small and focused:
 
 See [TECH_STACKS.md](TECH_STACKS.md) for exact runtime and dependency requirements.
 
+#### Optional (fresh Laravel installation only)
+`make be -- php artisan cache:table`
+`make be -- php artisan queue:table`
+
 #### OS Setup (unverified)
 
 `make init`
@@ -50,9 +54,13 @@ make dev
 
 The development workflow runs:
 - Laravel backend on http://localhost:8000
-- queue worker
-- pail log viewer
 - Vue frontend on http://localhost:5173
+
+For a full local developer workflow with queue worker and log viewer, use:
+
+```bash
+make dev-full
+```
 
 ### Demo accounts
 
@@ -74,7 +82,7 @@ The development workflow runs:
 
 - Vue 3 SPA with Pinia state management
 - Vue Router with guarded navigation
-- Vuetify-based UI components and responsive layout
+- Element Plus-based UI components and responsive layout
 - TypeScript support for safer component development
 
 ## Development workflow

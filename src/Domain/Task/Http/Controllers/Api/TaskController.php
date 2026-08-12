@@ -7,8 +7,10 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\User;
 use Domain\Task\Models\Task;
+use Domain\Task\Resources\TaskResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Auth;
 
 class TaskController extends Controller
@@ -19,12 +21,18 @@ class TaskController extends Controller
     private const ALLOWED_FILTERS = [
         'status' => 'status',
         'assigned_to' => 'assigned_to',
+        'title' => 'title',
     ];
+
+    public function __construct()
+    {
+        $this->authorizeResource(Task::class, 'task');
+    }
 
     /**
      * Get all tasks with optional filters using Strategy pattern.
      */
-    public function index(Request $request): JsonResponse
+    public function index(Request $request): AnonymousResourceCollection
     {
         /** @var User $user */
         $user = Auth::user();
@@ -32,9 +40,16 @@ class TaskController extends Controller
 
         // Apply filters using strategy pattern
         foreach (self::ALLOWED_FILTERS as $requestKey => $columnName) {
-            if ($request->has($requestKey)) {
-                $query->where($columnName, $request->input($requestKey));
+            if (! $request->filled($requestKey)) {
+                continue;
             }
+
+            if ($requestKey === 'title') {
+                $query->where($columnName, 'like', '%'.$request->input($requestKey).'%');
+                continue;
+            }
+
+            $query->where($columnName, $request->input($requestKey));
         }
 
         // If not admin, only show tasks assigned to the user
@@ -46,7 +61,7 @@ class TaskController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return response()->json($tasks);
+        return TaskResource::collection($tasks);
     }
 
     /**
@@ -58,19 +73,40 @@ class TaskController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
+        // canTaskWithoutAssignee
+        if (! $validated['assigned_to'] && $user->role !== 'admin') {
+            return response()->json([
+                'message' => 'Assignee is required',
+                'errors' => [
+                    'assigned_to' => [
+                        'Assignee is required',
+                    ],
+                ],
+            ], 422);
+        }
+
         if (!$this->canUserModifyTask($user, $validated['assigned_to'] ?? null)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                "message" => "Unauthorized",
+                "errors" => [
+                    "title" => [
+                        "Unauthorized"
+                    ]
+                ]
+            ], 403);
         }
 
         $task = Task::create($validated);
 
-        return response()->json($task->load('assignee:id,name,email'), 201);
+        return (new TaskResource($task->load('assignee:id,name,email')))
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * Get a specific task.
      */
-    public function show(Task $task): JsonResponse
+    public function show(Task $task): TaskResource
     {
         /** @var User $user */
         $user = Auth::user();
@@ -79,13 +115,13 @@ class TaskController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        return response()->json($task->load('assignee:id,name,email'));
+        return new TaskResource($task->load('assignee:id,name,email'));
     }
 
     /**
      * Update a task.
      */
-    public function update(UpdateTaskRequest $request, Task $task): JsonResponse
+    public function update(UpdateTaskRequest $request, Task $task): TaskResource
     {
         $validated = $request->validated();
         /** @var User $user */
@@ -95,9 +131,16 @@ class TaskController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        if (array_key_exists('assigned_to', $validated) && ! $this->canUserModifyTask($user, $validated['assigned_to'] ?? null)) {
+            return response()->json([
+                'message' => 'Unauthorized',
+                'errors' => ['assigned_to' => ['Unauthorized assignment change']],
+            ], 403);
+        }
+
         $task->update($validated);
 
-        return response()->json($task->load('assignee:id,name,email'));
+        return new TaskResource($task->load('assignee:id,name,email'));
     }
 
     /**

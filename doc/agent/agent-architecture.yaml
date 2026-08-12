@@ -1,0 +1,274 @@
+architecture:
+  name: coding-agent-core-stack
+  version: 4.0
+
+  intent:
+    purpose: strict_structural_constraints
+    architecture_profile: core
+    deployment_mode: resource_constrained
+
+system_runtime:
+  orchestration_engine:
+    name: rig
+    language: rust
+    deployment: native_binary
+
+  communication:
+    protocol: json_rpc
+    transport: stdio
+    mcp_client: true
+    concurrent_servers: 1
+
+  prompt_format:
+    type: yaml
+    conversational_prose: false
+    json_syntax: false
+
+web_application_stack:
+  backend:
+    framework: laravel
+    version: 13
+    language: php
+
+  frontend:
+    framework: vue
+    version: 3
+    language: javascript
+    api_style: composition_api
+
+  integration:
+    framework: inertia
+    architecture: monolithic_bridge
+    detached_internal_api: false
+
+  security:
+    framework: laravel_sanctum
+    state_mode: stateful_session_cookie
+    jwt_mode: optional
+
+intelligence_and_context:
+  local_index:
+    engine: sqlite
+    extensions:
+      - fts5
+    syntax_tree_indexing:
+      mode: incremental
+      full_reindex: false
+
+  trace_mcp:
+    purpose: targeted_code_retrieval
+    source_retrieval: line_range
+    full_file_retrieval: false
+
+  graph_memory:
+    engine: falkordb
+    deployment: external_preferred
+    agent_disabled_due_to: ram_4gb
+
+  graph_rag:
+    dependency:
+      - graph_memory
+    agent_disabled_due_to: graph_memory_unavailable
+
+  playbooks:
+    directory: .github
+
+  data_filtering:
+    engine: deterministic_parser
+    input: tool_logs
+    output: yaml_nodes
+
+  rtk:
+    format: yaml
+    purpose:
+      - execution_knowledge
+      - schema_states
+      - error_states
+      - iterative_fix_context
+
+context_management:
+  active_context:
+    full_chat_history: false
+    full_tool_logs: false
+    full_source_files: false
+
+  source_retrieval:
+    method: targeted
+    requires:
+      - file_path
+      - line_range
+
+  execution_history:
+    persistent_storage: false
+    active_context: false
+    retain_after_iteration: false
+    action_after_iteration: wipe
+
+  iteration_cycle:
+    collect_execution_data: true
+    deterministic_filter: true
+    extract_rtk: true
+    preserve_only_rtk: true
+    wipe_execution_history: true
+    clear_active_context: true
+
+  context_budget:
+    retrieval_scope: line_range
+    maximum_source_scope: targeted
+    maximum_history_scope: extracted_rtk
+    execution_history_retention: none
+
+agent_rules:
+  single_responsibility_prompting:
+    rules:
+      - isolate_infrastructure_settings
+      - isolate_business_logic
+      - isolate_technology_domains
+      - keep_yaml_files_micro_sized
+      - avoid_conversational_descriptions
+
+  environmental_separation:
+    core_playbooks:
+      mutable_at_runtime: false
+
+    environment:
+      file: system_env.yaml
+      mutable_at_runtime: true
+
+    execution_state:
+      input_mode: discrete_frames
+      embedded_in_playbook: false
+
+  context_isolation:
+    source_code:
+      ingest_full_file: false
+      retrieval: targeted
+
+      query:
+        include_file_path: true
+        include_line_range: true
+
+    tool_logs:
+      ingest_full_log: false
+      preprocessing: deterministic_filter
+
+    chat_history:
+      ingest_full_history: false
+
+  code_modification:
+    output: targeted_patch
+    full_file_replacement: false
+    unrelated_changes: false
+
+  playbook_extraction:
+    completion:
+      extract_execution_data: true
+      update_rtk: true
+      wipe_execution_history: true
+      clear_active_context: true
+
+resource_policy:
+  hardware:
+    ram_gb: 4
+    gpu: intel_uhd_610
+    gpu_memory: shared_system_memory
+    storage: ssd
+
+  operating_mode: constrained
+
+  memory:
+    reserve_for_os: true
+    reserve_for_editor: true
+    reserve_for_runtime: true
+    avoid_memory_resident_databases: true
+
+  concurrency:
+    max_active_agents: 1
+    max_parallel_tool_calls: 2
+    max_parallel_index_jobs: 1
+
+  indexing:
+    mode: incremental
+    background_full_scan: false
+    scan_on_startup: false
+    scan_only_changed_files: true
+
+  persistence:
+    prefer_disk_over_memory: true
+    sqlite_enabled: true
+
+  local_llm:
+    preferred_mode: remote_api
+    agent_disabled_due_to: ram_4gb
+
+resource_gated_components:
+  full_repository_index:
+    agent_disabled_due_to: ram_4gb
+    replacement: incremental_index
+
+  parallel_agents:
+    agent_disabled_due_to: ram_4gb
+    replacement: sequential_agent_execution
+
+  background_indexing:
+    agent_disabled_due_to: ram_4gb
+    replacement: on_demand_indexing
+
+  full_history_context:
+    agent_disabled_due_to: context_budget
+    replacement: extracted_rtk
+
+  full_source_ingestion:
+    agent_disabled_due_to: context_budget
+    replacement: targeted_line_range_retrieval
+
+future_architecture:
+  missing_enterprise_governance_layer:
+    agent_disabled_due_to: architecture_scope
+
+    intended_for:
+      - user_review
+      - future_architecture_adaptation
+
+    components:
+      identity_and_sso:
+        status: missing
+
+      rbac_and_abac:
+        status: missing
+
+      agent_capability_authorization:
+        status: missing
+
+      filesystem_and_workspace_sandboxing:
+        status: missing
+
+      shell_execution_policy:
+        status: missing
+
+      network_access_policy:
+        status: missing
+
+      secrets_management:
+        status: missing
+
+      immutable_audit_ledger:
+        status: missing
+
+      distributed_observability:
+        status: missing
+
+      queue_and_worker_infrastructure:
+        status: missing
+
+      high_availability:
+        status: missing
+
+      backup_and_disaster_recovery:
+        status: missing
+
+      multi_tenancy:
+        status: missing
+
+      production_deployment_approval:
+        status: missing

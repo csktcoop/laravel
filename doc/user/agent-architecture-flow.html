@@ -1,0 +1,696 @@
+<!-- Prompt Template
+Convert the following ASCII or text-based architecture flowchart into the strict JSON schema matching the format below. 
+
+### Output Requirements:
+1. Return ONLY valid JSON wrapped in a standard JSON block.
+2. Maintain the natural sequence of nodes and connectors in the `flow` array.
+3. Every element must be either `"type": "node"` or `"type": "connector"`.
+
+### JSON Schema:
+{
+  "flow": [
+    {
+      "type": "node",
+      "title": "Node Title",
+      "description": "Short overview description.",
+      "className": "", // Options: "" (standard), "wipe-node" (red alert node), or "next-node" (green accent node)
+      "nested": [
+        { "label": "Sub-box Label", "value": "Sub-box Content" }
+      ],
+      "details": "Markdown formatted long details string for the fullscreen modal."
+    },
+    {
+      "type": "connector",
+      "label": "Connector Text",
+      "details": "Markdown details explaining what transfers across this connector step."
+    }
+  ]
+}
+
+### Source Flowchart:
+[PASTE YOUR TEXT OR ASCII FLOWCHART HERE]
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Interactive Flowchart Diagram</title>
+    <!-- Marked.js CDN for Markdown parsing in modal -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #34d399;
+            --accent-red: #f87171;
+            --border-color: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: var(--panel-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .utility-btn {
+            background: var(--border-color);
+            color: var(--text-main);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        .utility-btn:hover {
+            background: #475569;
+        }
+
+        main {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 60px);
+            position: relative;
+        }
+
+        #diagram-container {
+            flex: 1;
+            overflow: auto;
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+            background-size: 24px 24px;
+        }
+
+        .flow-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            min-width: 600px;
+        }
+
+        /* Node Styling */
+        .node-box {
+            background: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.25rem;
+            width: 520px;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .node-box:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.15);
+        }
+
+        .node-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+        }
+
+        .node-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .nested-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+
+        .nested-box {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            padding: 0.7rem;
+            font-size: 0.8rem;
+        }
+
+        .nested-box strong {
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Specialized Node Variants */
+        .wipe-node {
+            border-color: var(--accent-red);
+        }
+
+        .wipe-node:hover {
+            border-color: var(--accent-red);
+            box-shadow: 0 4px 12px rgba(248, 113, 113, 0.15);
+        }
+
+        .wipe-node .node-title {
+            color: var(--accent-red);
+        }
+
+        .next-node {
+            border-color: var(--accent-green);
+            width: auto;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .next-node:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 4px 12px rgba(52, 211, 153, 0.15);
+        }
+
+        .next-node .node-title {
+            color: var(--accent-green);
+            margin-bottom: 0;
+        }
+
+        /* Connector Styling */
+        .connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 70px;
+            width: 200px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .connector-line {
+            width: 2px;
+            height: 100%;
+            background-color: var(--border-color);
+            position: absolute;
+            z-index: 1;
+            transition: background-color 0.2s;
+        }
+
+        .connector-arrow {
+            position: absolute;
+            bottom: -2px;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid var(--border-color);
+            z-index: 2;
+            transition: border-top-color 0.2s;
+        }
+
+        .connector-label {
+            background: var(--bg-color);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            z-index: 3;
+            transition: all 0.2s;
+        }
+
+        .connector:hover .connector-line {
+            background-color: var(--accent-blue);
+        }
+
+        .connector:hover .connector-arrow {
+            border-top-color: var(--accent-blue);
+        }
+
+        .connector:hover .connector-label {
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        /* Fullscreen Modal Styling */
+        #details-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 100;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        #details-modal.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .modal-content {
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 4rem 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .close-btn {
+            position: fixed;
+            top: 2rem;
+            right: 3rem;
+            font-size: 2.5rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+            z-index: 101;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-red);
+        }
+
+        .modal-header-tag {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--accent-blue);
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .modal-title {
+            font-size: 2.25rem;
+            font-weight: 800;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        /* Markdown body content inside modal */
+        .markdown-body {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: #cbd5e1;
+        }
+
+        .markdown-body h3 {
+            color: var(--text-main);
+            margin: 1.5rem 0 0.5rem 0;
+            font-size: 1.3rem;
+        }
+
+        .markdown-body ul {
+            margin-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .markdown-body li {
+            margin-bottom: 0.25rem;
+        }
+
+        .markdown-body code {
+            background: #0f172a;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #f472b6;
+        }
+
+        .markdown-body pre {
+            background: #0f172a;
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px solid var(--border-color);
+        }
+
+        .markdown-body pre code {
+            color: #e2e8f0;
+            background: none;
+            padding: 0;
+        }
+
+        /* Config Drawer Styling */
+        #config-drawer {
+            position: fixed;
+            top: 0;
+            right: -500px;
+            width: 500px;
+            height: 100vh;
+            background: var(--panel-bg);
+            border-left: 1px solid var(--border-color);
+            z-index: 50;
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            padding: 1.5rem;
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        #config-drawer.active {
+            right: 0;
+        }
+
+        #config-drawer h2 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--accent-blue);
+        }
+
+        #config-drawer textarea {
+            flex: 1;
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            color: #34d399;
+            font-family: monospace;
+            padding: 1rem;
+            border-radius: 4px;
+            resize: none;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .drawer-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .drawer-actions button {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 4px;
+            border: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: var(--accent-blue);
+            color: var(--bg-color);
+        }
+
+        .cancel-btn {
+            background: var(--border-color);
+            color: var(--text-main);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>HTML Interactive Flowchart Diagram</h1>
+        <button class="utility-btn" onclick="toggleDrawer()">🛠️ Modify Schema Data</button>
+    </header>
+
+    <main>
+        <div id="diagram-container">
+            <div class="flow-wrapper" id="flow-target">
+                <!-- Dynamically populated via JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Fullscreen Details View Modal -->
+    <div id="details-modal">
+        <button class="close-btn" onclick="closeModal()">×</button>
+        <div class="modal-content">
+            <div id="modal-tag" class="modal-header-tag">NODE ARCHITECTURE DETAILS</div>
+            <div id="modal-title" class="modal-title">Node Title</div>
+            <div id="modal-body" class="markdown-body"></div>
+        </div>
+    </div>
+
+    <!-- Configuration Console Drawer Overlay -->
+    <div id="config-drawer">
+        <h2>Configure Pipeline Schema JSON</h2>
+        <textarea id="schema-json-input" placeholder="Paste schema JSON here..."></textarea>
+        <div class="drawer-actions">
+            <button class="save-btn" onclick="saveSchemaData()">Render Pipeline</button>
+            <button class="cancel-btn" onclick="toggleDrawer()">Close Panel</button>
+        </div>
+    </div>
+
+    <script>
+        // Configurable initial JSON pipeline state matching your ASCII flowchart
+        let pipelineData = {
+            "flow": [
+                {
+                    "type": "node",
+                    "title": "Vue 3 / Frontend",
+                    "description": "Client interface handling interaction and state parameters.",
+                    "className": "",
+                    "nested": [
+                        { "label": "Actions", "value": "User Events / Mutations" },
+                        { "label": "State", "value": "Reactive State & Props" }
+                    ],
+                    "details": "### Vue 3 Frontend Layer\n- **Role**: Client UI layer handling rendering, user interactions, and reactive state updates.\n- **Data Dispatch**: Propagates state updates back to Laravel endpoints via Inertia.js props."
+                },
+                {
+                    "type": "connector",
+                    "label": "Inertia.js",
+                    "details": "### Inertia.js Bridge\n- **Role**: Replaces GraphQL/REST client boilerplate by turning backend Laravel routes directly into Vue components.\n- **Behavior**: Transmits state changes transparently without full page reloads."
+                },
+                {
+                    "type": "node",
+                    "title": "Laravel 13 / Backend",
+                    "description": "Core application orchestration, stateful auth, and database persistence.",
+                    "className": "",
+                    "nested": [
+                        { "label": "Stateful Auth", "value": "Laravel Sanctum" },
+                        { "label": "Application Data", "value": "SQLite / PostgreSQL" }
+                    ],
+                    "details": "### Laravel 13 Framework Backend\n- **Auth Component**: Uses Sanctum for session cookies and token authorization.\n- **Database Engine**: Manages persistence via SQLite or PostgreSQL drivers.\n- **Integration**: Bridges frontend requests to local Rust tools/agents."
+                },
+                {
+                    "type": "connector",
+                    "label": "Agent / Tool Execution",
+                    "details": "### Execution Interface\n- **Role**: Passes instructions from backend handlers to the local Rust orchestration runtime."
+                },
+                {
+                    "type": "node",
+                    "title": "Rig - Rust Orchestration",
+                    "description": "Executes context retrieval modules and routes prompts to the LLM agent.",
+                    "className": "",
+                    "nested": [
+                        { "label": "Instructions", "value": "Caveman YAML Modules" },
+                        { "label": "Context Retrieval", "value": "trace-mcp Targeted Source" },
+                        { "label": "LLM Core", "value": "Reason / Patch Generation" }
+                    ],
+                    "details": "### Rig Rust Orchestrator\n- **Instruction Set**: Formats directives using concise Caveman YAML modules.\n- **Context Engine**: Calls `trace-mcp` for source code pin-pointing and context assembly.\n- **Model Execution**: Connects to the primary LLM to formulate fixes or code patches."
+                },
+                {
+                    "type": "connector",
+                    "label": "Tool Execution",
+                    "details": "### Tool Invocation Route\n- Pass generated patches and code references to static analyzer engines."
+                },
+                {
+                    "type": "node",
+                    "title": "Static Analysis / Tooling",
+                    "description": "Executes static check suites against generated raw patches.",
+                    "className": "",
+                    "nested": [],
+                    "details": "### Static Analysis Layer\n- **Function**: Runs linting, type checks, and static verification scripts.\n- **Output**: Generates structural raw analysis results for downstream parsing."
+                },
+                {
+                    "type": "connector",
+                    "label": "Raw Output",
+                    "details": "### Raw Stream Transport\n- Delivers unparsed static analysis output directly to the parsing node."
+                },
+                {
+                    "type": "node",
+                    "title": "Deterministic Parser",
+                    "description": "Parses unformatted stdout/stderr streams into standardized execution units.",
+                    "className": "",
+                    "nested": [
+                        { "label": "Operation", "value": "Raw Output → Lean YAML Execution Nodes" }
+                    ],
+                    "details": "### Deterministic Parser\n- **Function**: Filters verbose logs down into structured, actionable YAML/JSON nodes.\n- **Purpose**: Eliminates extra token overhead before passing data into state memory."
+                },
+                {
+                    "type": "connector",
+                    "label": "Parsed Node Pipeline",
+                    "details": "### Direct Feed\n- Writes parsed verification state into persistent context memory."
+                },
+                {
+                    "type": "node",
+                    "title": "RTK (Minimal Persistent Knowledge)",
+                    "description": "Retains key architectural state across iterative run executions.",
+                    "className": "",
+                    "nested": [
+                        { "label": "Retained Context", "value": "Schema States / Errors / Fix Knowledge" }
+                    ],
+                    "details": "### RTK Context Persistence\n- **Purpose**: Maintains schema snapshots, system errors, and successful resolution patterns across pipeline cycles."
+                },
+                {
+                    "type": "connector",
+                    "label": "Iteration Complete",
+                    "details": "### Transition State\n- Signals execution end and prepares environment cleanup."
+                },
+                {
+                    "type": "node",
+                    "title": "WIPE EXECUTION HISTORY",
+                    "description": "Purges operational execution logs while preserving RTK knowledge.",
+                    "className": "wipe-node",
+                    "nested": [
+                        { "label": "Retention Policy", "value": "Preserve RTK Knowledge Only" }
+                    ],
+                    "details": "### Execution Wipe Phase\n- Purges temporary raw output, intermediate states, and step history to save context window tokens while leaving long-term RTK memory intact."
+                },
+                {
+                    "type": "connector",
+                    "label": "Next Iteration",
+                    "details": "### Loop Transition\n- Triggers subsequent pipeline execution."
+                },
+                {
+                    "type": "node",
+                    "title": "Next Iteration Ready",
+                    "description": "Cycle reset completed successfully.",
+                    "className": "next-node",
+                    "nested": [],
+                    "details": "### Cycle Reset Complete\n- Ready to accept new user requests or loop actions."
+                }
+            ]
+        };
+
+        // Render Pipeline Function
+        function renderPipeline(data) {
+            const target = document.getElementById("flow-target");
+            target.innerHTML = "";
+
+            data.flow.forEach(item => {
+                if (item.type === "node") {
+                    const nodeBox = document.createElement("div");
+                    nodeBox.className = `node-box ${item.className || ''}`;
+                    nodeBox.onclick = () => openModal(item.title, item.details, "NODE ARCHITECTURE DETAILS");
+
+                    let nestedHtml = "";
+                    if (item.nested && item.nested.length > 0) {
+                        nestedHtml = `<div class="nested-grid">`;
+                        item.nested.forEach(nestedItem => {
+                            nestedHtml += `<div class="nested-box"><strong>${nestedItem.label}</strong>${nestedItem.value}</div>`;
+                        });
+                        nestedHtml += `</div>`;
+                    }
+
+                    nodeBox.innerHTML = `
+                        <div class="node-title">${item.title}</div>
+                        <div class="node-desc">${item.description}</div>
+                        ${nestedHtml}
+                    `;
+                    target.appendChild(nodeBox);
+                } else if (item.type === "connector") {
+                    const conn = document.createElement("div");
+                    conn.className = "connector";
+                    conn.onclick = () => openModal(`Connector: ${item.label}`, item.details, "PIPELINE ROUTING TRANSIT");
+                    conn.innerHTML = `
+                        <div class="connector-line"></div>
+                        <div class="connector-label">${item.label}</div>
+                        <div class="connector-arrow"></div>
+                    `;
+                    target.appendChild(conn);
+                }
+            });
+
+            // Keep drawer input textarea updated with formatted JSON
+            document.getElementById("schema-json-input").value = JSON.stringify(data, null, 4);
+        }
+
+        // Modal Display Functions
+        function openModal(title, markdownContent, tagText) {
+            document.getElementById("modal-tag").innerText = tagText;
+            document.getElementById("modal-title").innerText = title;
+            document.getElementById("modal-body").innerHTML = typeof marked !== 'undefined' 
+                ? marked.parse(markdownContent || "No detailed documentation supplied.")
+                : markdownContent;
+            
+            const modal = document.getElementById("details-modal");
+            modal.classList.add("active");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            document.getElementById("details-modal").classList.remove("active");
+            document.body.style.overflow = "";
+        }
+
+        // Configuration Panel Controls
+        function toggleDrawer() {
+            document.getElementById("config-drawer").classList.toggle("active");
+        }
+
+        function saveSchemaData() {
+            try {
+                const inputContent = document.getElementById("schema-json-input").value;
+                const parsedData = JSON.parse(inputContent);
+                if (!parsedData.flow || !Array.isArray(parsedData.flow)) {
+                    throw new Error("JSON structure must include a root 'flow' array.");
+                }
+                pipelineData = parsedData;
+                renderPipeline(pipelineData);
+                toggleDrawer();
+            } catch (err) {
+                alert("Schema Validation Error: " + err.message);
+            }
+        }
+
+        // Escape Key Modal Dismissal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+
+        // Initialize display execution on DOM Ready
+        window.onload = () => {
+            renderPipeline(pipelineData);
+        };
+    </script>
+</body>
+
+</html>

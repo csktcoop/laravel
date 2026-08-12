@@ -3,8 +3,6 @@
         "rtk": true
     },
     "js/ts.tsserver.automaticTypeAcquisition.enabled": false,
-    "js/ts.tsserver.useSyntaxServer": "never",
-    "js/ts.experimental.useTsgo": true,
     "biome-monorepo.workingDirectory": [
         "vue3"
     ],

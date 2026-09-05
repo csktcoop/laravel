@@ -1,13 +1,13 @@
 <?php
 
-namespace Domain\Task\Http\Controllers\Api;
+namespace DDD\Task\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\User;
-use Domain\Task\Models\Task;
-use Domain\Task\Resources\TaskResource;
+use DDD\Task\Models\Task;
+use DDD\Task\Resources\TaskResource;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
@@ -57,8 +57,9 @@ class TaskController extends Controller
             $query->where('assigned_to', $user->id);
         }
 
-        $tasks = $query->with('assignee:id,name,email')
-            ->orderBy('created_at', 'desc')
+        $tasks = $query->with('user:id,name,email')
+            ->select(['id', 'title', 'status', 'due_at']) 
+            ->latest()
             ->paginate(20);
 
         return TaskResource::collection($tasks);
@@ -108,13 +109,6 @@ class TaskController extends Controller
      */
     public function show(Task $task): TaskResource
     {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (!$this->canUserViewTask($user, $task)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         return new TaskResource($task->load('assignee:id,name,email'));
     }
 
@@ -127,17 +121,6 @@ class TaskController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        if (!$this->canUserViewTask($user, $task)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
-        if (array_key_exists('assigned_to', $validated) && ! $this->canUserModifyTask($user, $validated['assigned_to'] ?? null)) {
-            return response()->json([
-                'message' => 'Unauthorized',
-                'errors' => ['assigned_to' => ['Unauthorized assignment change']],
-            ], 403);
-        }
-
         $task->update($validated);
 
         return new TaskResource($task->load('assignee:id,name,email'));
@@ -148,13 +131,6 @@ class TaskController extends Controller
      */
     public function destroy(Task $task): JsonResponse
     {
-        /** @var User $user */
-        $user = Auth::user();
-
-        if (!$this->canUserViewTask($user, $task)) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
-
         $task->delete();
 
         return response()->json(['message' => 'Task deleted successfully']);
@@ -173,16 +149,4 @@ class TaskController extends Controller
         return $assignedTo === $user->id;
     }
 
-    /**
-     * Check if user can view/edit/delete a task.
-     * Users can only access their own tasks unless they are admin.
-     */
-    private function canUserViewTask(User $user, Task $task): bool
-    {
-        if ($user->role === 'admin') {
-            return true;
-        }
-
-        return $task->assigned_to === $user->id;
-    }
 }

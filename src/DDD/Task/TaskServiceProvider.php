@@ -1,10 +1,10 @@
 <?php
 
-namespace Domain\Task;
+namespace DDD\Task;
 
 use Illuminate\Support\ServiceProvider;
-use Domain\Task\Repositories\TaskRepositoryInterface;
-use Domain\Task\Repositories\TaskRepository;
+use DDD\Task\Repositories\TaskRepositoryInterface;
+use DDD\Task\Repositories\TaskRepository;
 
 class TaskServiceProvider extends ServiceProvider
 {

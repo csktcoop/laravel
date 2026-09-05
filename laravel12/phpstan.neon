@@ -6,6 +6,6 @@ parameters:
         - ../src
 
     viewDirectories:
-        - ../src/Domain/Task/Resources/views
+        - ../src/DDD/Task/Resources/views
 
     level: 8

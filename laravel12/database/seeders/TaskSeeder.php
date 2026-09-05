@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Database\Factories\TaskFactory;
-use Domain\Task\Models\Task;
+use DDD\Task\Models\Task;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 

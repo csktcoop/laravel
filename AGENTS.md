@@ -19,7 +19,7 @@
 - `Makefile` — A map for cmds needed to work with the project — reference
 
 <!--
-# User-only routes
+# USER routes
 
 - Path — Purpose — Status
 - `~/.config/rtk/config.toml` — `rtk` instructions — active

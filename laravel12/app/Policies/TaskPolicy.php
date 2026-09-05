@@ -3,7 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Domain\Task\Models\Task;
+use DDD\Task\Models\Task;
 
 class TaskPolicy
 {

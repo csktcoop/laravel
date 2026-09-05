@@ -1,13 +1,13 @@
 <?php
 
-namespace Domain\Task\Http\Controllers;
+namespace DDD\Task\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
-use Domain\Task\Models\Task;
-use Domain\Task\Repositories\TaskRepositoryInterface;
+use DDD\Task\Models\Task;
+use DDD\Task\Repositories\TaskRepositoryInterface;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 
 class TaskController extends Controller
 {
@@ -27,7 +27,7 @@ class TaskController extends Controller
 
         /** @var \App\Models\User $user */
         $user = $request->user();
-        return view('task::index', [
+        return app('view')->make('task::index', [
             'tasks'          => $this->taskRepo->getFilteredTasksForUser($user->id, $filters),
             'STATUS'         => Task::STATUS, // Still using constant for UI
             'filter_status'  => $filters['status'],
@@ -74,7 +74,7 @@ class TaskController extends Controller
     {
         $this->authorize('update', $task);
 
-        return view('task::edit', [
+        return app('view')->make('task::edit', [
             'task' => $task,
         ]);
     }

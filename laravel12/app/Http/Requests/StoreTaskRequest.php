@@ -14,11 +14,11 @@ class StoreTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
+            'status'      => 'nullable|in:todo,in_progress,done',
             'description' => 'nullable|string',
-            'status' => 'required|in:todo,in_progress,done',
-            'assigned_to' => 'nullable|exists:users,id',
-            'due_date' => 'nullable|date',
+            'user_id'     => 'nullable|exists:users,id',
+            'due_at'      => 'nullable|datetime|after_or_equal:today',
         ];
     }
 

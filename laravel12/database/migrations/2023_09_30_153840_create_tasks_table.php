@@ -16,10 +16,17 @@ return new class extends Migration
             $table->string('title');
             $table->text('description')->nullable();
             $table->enum('status', ['todo', 'in_progress', 'done'])->default('todo');
-            $table->foreignId('assigned_to')->nullable()->constrained('users')->cascadeOnDelete();
-            $table->date('due_date')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users')->cascadeOnDelete();
+            $table->dateTime('due_at')->nullable();
             $table->timestamps();
+            $table->index(['user_id', 'status']);
         });
+        // TODO
+        // Schema::create('task_user', function (Blueprint $table) {
+        //     $table->foreignId('task_id')->constrained()->cascadeOnDelete();
+        //     $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+        //     $table->primary(['task_id', 'user_id']); 
+        // });
     }
 
     /**

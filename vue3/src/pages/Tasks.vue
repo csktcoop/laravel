@@ -2,6 +2,7 @@
   <div class="tasks-page">
     <div class="page-header">
       <h1>Tasks</h1>
+      <!-- biome-ignore lint/a11y/useSemanticElements: Element Plus renders a semantic button -->
       <el-button role="button" type="primary" @click="showCreateDialog = true"
         >New Task</el-button
       >
@@ -80,9 +81,11 @@
         </el-table-column>
         <el-table-column label="Actions" width="120">
           <template #default="{ row }">
+            <!-- biome-ignore lint/a11y/useSemanticElements: Element Plus renders a semantic button -->
             <el-button role="button" link type="primary" @click="editTask(row)"
               >Edit</el-button
             >
+            <!-- biome-ignore lint/a11y/useSemanticElements: Element Plus renders a semantic button -->
             <el-button role="button" link type="danger" @click="deleteTask(row.id)"
               >Delete</el-button
             >
@@ -159,7 +162,9 @@
 
       <template #footer>
         <span class="dialog-footer">
+          <!-- biome-ignore lint/a11y/useSemanticElements: Element Plus renders a semantic button -->
           <el-button role="button" @click="closeDialog">Cancel</el-button>
+          <!-- biome-ignore lint/a11y/useSemanticElements: Element Plus renders a semantic button -->
           <el-button role="button" type="primary" :loading="formLoading" @click="saveTask">
             {{ editingTask ? 'Update' : 'Create' }}
           </el-button>

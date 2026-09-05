@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Api\AuthController;
-use Domain\Task\Http\Controllers\Api\TaskController;
+use App\Http\Controllers\api\AuthController;
+use DDD\Task\Http\Controllers\api\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*

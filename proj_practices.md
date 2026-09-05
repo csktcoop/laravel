@@ -136,3 +136,17 @@ Agentic RAG is appropriate for iterative tasks that need multiple steps of retri
 ## RAG Evaluation
 
 Evaluate retrieval quality, answer usefulness, and factual grounding regularly. The goal is not just to retrieve information, but to ensure the resulting output is relevant, correct, and safe to act on.
+
+---
+
+# Idempotency
+
+TBD
+
+# Reconciliation
+
+TBD
+
+# Snowflake ID + Sqids
+
+TBD

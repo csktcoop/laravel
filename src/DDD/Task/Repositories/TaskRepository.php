@@ -1,7 +1,7 @@
 <?php
-namespace Domain\Task\Repositories;
+namespace DDD\Task\Repositories;
 
-use Domain\Task\Models\Task;
+use DDD\Task\Models\Task;
 use Illuminate\Support\Collection;
 
 class TaskRepository implements TaskRepositoryInterface

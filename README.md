@@ -1,36 +1,25 @@
 # Team Task Manager
 
-A monorepo for a task management application with a Laravel 12 backend and a Vue 3 frontend. The project is structured around a shared domain layer so business rules can evolve independently from the delivery surface.
-
-## Documentation structure
-
-This repository keeps documentation intentionally small and focused:
-
-- [README.md](README.md) — project overview, setup, and entry points
-- [ARCHITECTURE.md](ARCHITECTURE.md) — system design, boundaries, and request flow
-- [TECH_STACKS.md](TECH_STACKS.md) — runtime versions, frameworks, and tooling
-- [PRACTICES.md](PRACTICES.md) — coding and architecture conventions
-- [ISSUES.md](ISSUES.md) — tracked issues and follow-up work
-- [DOCUMENTATION_PRACTICES.md](DOCUMENTATION_PRACTICES.md) — guidance for keeping docs useful for humans and AI agents
+A monorepo for a simple task management app with a Laravel backend and a Vue frontend. The project is structured around a shared domain layer so business rules can evolve independently from the delivery surface.
 
 ## Workspace layout
 
-- [laravel12/](laravel12/) — Laravel API, authentication, persistence, queues, and artisan commands
-- [vue3/](vue3/) — Vue 3 single-page app, routing, Pinia stores, and UI components
-- [src/](src/) — shared domain concepts and DDD-oriented abstractions
+- `laravel/` — Laravel API, authentication, persistence, queues, and artisan commands
+- `vue3/` — Vue 3 single-page app, routing, Pinia stores, and UI components
+- `src/`` — shared domain concepts and DDD-oriented abstractions
 - [Makefile](Makefile) — convenience commands for install, dev, lint, and tests
 
 ## Quick start
 
 ### Prerequisites
 
-See [TECH_STACKS.md](TECH_STACKS.md) for exact runtime and dependency requirements.
+See [technical_stacks.md](technical_stacks.md) for exact runtime and dependency requirements.
 
-#### Optional (fresh Laravel installation only)
+#### pre — Optional (fresh Laravel installations only)
 `make be -- php artisan cache:table`
 `make be -- php artisan queue:table`
 
-#### OS Setup (unverified)
+#### pre — OS Setup (unverified)
 
 `make init`
 

@@ -3,7 +3,7 @@
 # Default action: list available targets
 .DEFAULT_GOAL := help
 
-.PHONY: help install dev be be-dev be-serve be-queue be-log fe fe-dev fe-build lint be-test init
+.PHONY: help install dev be be-dev be-serve be-queue be-log fe fe-dev fe-build lint be-test init rtk-up
 
 # Capture everything starting from the 2nd word (composer, require, -D, etc.)
 ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -12,7 +12,7 @@ ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 %:
 	@:
 
-BACKEND_DIR ?= laravel12
+BACKEND_DIR ?= laravel
 BACKEND_HOST ?= 127.0.0.1
 BACKEND_PORT ?= 8000
 FRONTEND_DIR ?= vue3
@@ -28,6 +28,7 @@ help:
 	@echo "  make fe-build      - Build frontend assets"
 	@echo "  make lint          - Run linters on both directories"
 	@echo "  make be-test       - Run Laravel tests"
+	@echo "  make be-active     - Switch between backend dirs. e.g. laravel12 vs laravel13"
 	@echo "  make init          - Install pre-requisite packages"
 
 install:
@@ -74,6 +75,9 @@ be-test:
 	@cd $(BACKEND_DIR) && php artisan config:clear --ansi
 	@cd $(BACKEND_DIR) && ./vendor/bin/pint --parallel --test
 	@cd $(BACKEND_DIR) && php artisan test
+
+be-active:
+	ln -sfn $(ARGS) laravel
 
 fe:
 	@cd $(FRONTEND_DIR) && $(ARGS)

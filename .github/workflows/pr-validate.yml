@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Check PR body for required sections
-        uses: actions/github-script@v6
+        uses: actions/github-script@v9
         with:
           script: |
             const body = context.payload.pull_request && context.payload.pull_request.body ? context.payload.pull_request.body : '';
